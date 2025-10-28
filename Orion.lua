@@ -43,12 +43,12 @@ local L_10_ = {
     Flags = {},
     Themes = {
         Default = {
-            Main = Color3.fromRGB(25, 25, 25),
-            Second = Color3.fromRGB(32, 32, 32),
-            Stroke = Color3.fromRGB(60, 60, 60),
-            Divider = Color3.fromRGB(60, 60, 60),
-            Text = Color3.fromRGB(240, 240, 240),
-            TextDark = Color3.fromRGB(150, 150, 150)
+            Main = Color3.fromRGB(20, 20, 20),
+            Second = Color3.fromRGB(25, 25, 25),
+            Stroke = Color3.fromRGB(40, 40, 40),
+            Divider = Color3.fromRGB(45, 45, 45),
+            Text = Color3.fromRGB(255, 255, 255),
+            TextDark = Color3.fromRGB(160, 160, 160)
         }
     },
     SelectedTheme = "Default",
@@ -860,7 +860,7 @@ end
 
 L_17_func("Corner", function(L_88_arg1, L_89_arg2)
     local L_90_ = L_16_func("UICorner", {
-        CornerRadius = UDim.new(L_88_arg1 or 0, L_89_arg2 or 10)
+        CornerRadius = UDim.new(L_88_arg1 or 0, L_89_arg2 or 4)
     })
     return L_90_
 end)
@@ -1013,7 +1013,7 @@ function L_10_:MakeNotification(L_121_arg1)
             AutomaticSize = Enum.AutomaticSize.Y,
             Parent = L_31_
         })
-        local L_123_ = L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(25, 25, 25), 0, 10), {
+        local L_123_ = L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(25, 25, 25), 0, 5), {
             Parent = L_122_,
             Size = UDim2.new(1, 0, 0, 0),
             Position = UDim2.new(1, -55, 0, 0),
@@ -1138,7 +1138,7 @@ function L_10_:MakeWindow(L_124_arg1)
     local L_131_ = L_19_func(L_18_func("TFrame"), {
         Size = UDim2.new(1, 0, 0, 50)
     })
-    local L_132_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+    local L_132_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
         Size = UDim2.new(0, 150, 1, -50),
         Position = UDim2.new(0, 0, 0, 50)
     }), {
@@ -1206,7 +1206,7 @@ function L_10_:MakeWindow(L_124_arg1)
         Size = UDim2.new(1, 0, 0, 1),
         Position = UDim2.new(0, 0, 1, -1)
     }), "Stroke")
-    local L_135_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+    local L_135_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
         Parent = L_12_,
         Position = UDim2.new(0.5, -307, 0.5, -172),
         Size = UDim2.new(0, 615, 0, 344),
@@ -1218,7 +1218,7 @@ function L_10_:MakeWindow(L_124_arg1)
         }), {
             L_133_,
             L_134_,
-            L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
+            L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
                 Size = UDim2.new(0, 70, 0, 30),
                 Position = UDim2.new(1, -90, 0, 10)
             }), {
@@ -1260,23 +1260,24 @@ function L_10_:MakeWindow(L_124_arg1)
     end)
     L_14_func(L_130_.MouseButton1Up, function()
         if L_126_ then
+            -- Expand the window
             L_3_:Create(L_135_, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, 615, 0, 344)
             }):Play()
             L_130_.Ico.Image = "rbxassetid://7072719338"
-            task.wait(0.02)
+            task.wait(0.5)  -- Wait for tween to complete
             L_135_.ClipsDescendants = false
             L_132_.Visible = true
             L_134_.Visible = true
         else
+            -- Minimize the window
             L_135_.ClipsDescendants = true
             L_134_.Visible = false
+            L_132_.Visible = false
             L_130_.Ico.Image = "rbxassetid://7072720870"
             L_3_:Create(L_135_, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, L_133_.TextBounds.X + 140, 0, 50)
             }):Play()
-            task.wait(0.1)
-            L_132_.Visible = false
         end
         L_126_ = not L_126_
     end)
