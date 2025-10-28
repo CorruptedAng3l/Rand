@@ -1258,13 +1258,22 @@ function L_10_:MakeWindow(L_124_arg1)
             L_135_.Visible = true
         end
     end)
+    local L_126_isAnimating = false  -- Prevent rapid clicks
     L_14_func(L_130_.MouseButton1Up, function()
+        if L_126_isAnimating then return end  -- Prevent clicks during animation
+        L_126_isAnimating = true
+        
         if L_126_ then
             -- Expand the window
+            L_132_.Visible = false  -- Hide immediately to prevent flash
+            L_134_.Visible = false
+            L_135_.ClipsDescendants = true
+            
             L_3_:Create(L_135_, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, 615, 0, 344)
             }):Play()
             L_130_.Ico.Image = "rbxassetid://7072719338"
+            
             task.wait(0.5)  -- Wait for tween to complete
             L_135_.ClipsDescendants = false
             L_132_.Visible = true
@@ -1275,11 +1284,16 @@ function L_10_:MakeWindow(L_124_arg1)
             L_134_.Visible = false
             L_132_.Visible = false
             L_130_.Ico.Image = "rbxassetid://7072720870"
+            
             L_3_:Create(L_135_, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
                 Size = UDim2.new(0, L_133_.TextBounds.X + 140, 0, 50)
             }):Play()
+            
+            task.wait(0.5)  -- Wait for tween to complete
         end
+        
         L_126_ = not L_126_
+        L_126_isAnimating = false
     end)
     local function L_136_func()
         L_135_.Visible = false
