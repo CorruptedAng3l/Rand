@@ -1,11 +1,5 @@
--- // Abyss UI Library - Fixed & Improved Version \ --
 --[[
-    ╔═══════════════════════════════════════════════════════════════════════╗
-    ║                ABYSS UI LIBRARY - OPTIMIZED VERSION                   ║
-    ║                   Bug Fixes & Performance Improvements                ║
-    ╚═══════════════════════════════════════════════════════════════════════╝
-    
-    CRITICAL FIXES APPLIED:
+    FIXES APPLIED:
     ========================
     
     1. FIXED: Division by Zero Bug in Slider Component
@@ -22,7 +16,7 @@
        - Supports Decimals = 1, 2, 3, etc. (decimal places)
        - Uses math.floor for integers, bracket method for decimals
        
-    OPTIMIZATION IMPROVEMENTS:
+    OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
     
     1. OPTIMIZED: AddDrag Function
