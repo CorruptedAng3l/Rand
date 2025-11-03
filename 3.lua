@@ -1,11 +1,5 @@
--- // Abyss UI Library - Fixed & Improved Version \ --
 --[[
-    ╔═══════════════════════════════════════════════════════════════════════╗
-    ║                    ABYSS UI LIBRARY - FIXED VERSION                   ║
-    ║                         Bug Fixes & Improvements                      ║
-    ╚═══════════════════════════════════════════════════════════════════════╝
-    
-    CRITICAL FIXES APPLIED:
+    FIXES APPLIED:
     ========================
     
     1. FIXED: Division by Zero Bug in Slider Component
@@ -36,10 +30,6 @@
     - No breaking changes to API
 ]]
 
--- // Lib \\ --
---[[
-    local UI = loadstring(game:HttpGet("https://abyss.best/assets/files/gayasf.ui2?key=5y1lxXSfWKhlQkSqhUuFyB8kPp8hsCau"))()
-]]
 -- // Library Init \\ --
 local Start = tick()
 local LoadTime = tick()
