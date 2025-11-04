@@ -25,13 +25,13 @@
     5. FIXED: Dropdown Menu Rendering Issues (Anime Selector Bug)
        - Problem: Dropdown list items weren't added to Tab render array
        - Missing items weren't hidden/shown correctly when switching tabs
-       - Dropdown items had inconsistent ZIndex causing overlap issues
+       - Dropdown items had ZIndex = 3 (became 23), overlapping other UI elements
        - Solution: Added dropdown list items and detect hitbox to Tab["Render"]
        - Added DropdownDetect visibility control to ShowList function
-       - Standardized all dropdown ZIndex values to 0-1 (becomes 20-21 after +20)
-       - DropdownDetect, Inline, Outline, Gradient all use ZIndex = 0
-       - Text elements (Title, Value, Symbol, SelectionTitle) use ZIndex = 1
-       - Impact: Dropdown menus render consistently without overlapping across all executors
+       - Added ZIndex = 1 to DropdownGradient for proper layering
+       - Changed dropdown items to ZIndex = -5 to -3 (becomes 15-17 after +20)
+       - Changed DropdownDetect to ZIndex = -6 (becomes 14 after +20)
+       - Impact: Dropdown menus now work correctly across all executors without overlapping
        
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
@@ -3272,8 +3272,7 @@ do
                         Thickness = 1,
                         Color = Library.Theme.Inline,
                         Visible = true,
-                        Filled = true,
-                        ZIndex = 0
+                        Filled = true
                     })
                     --
                     local DropdownOutline = Utility.AddDrawing("Square", {
@@ -3282,8 +3281,7 @@ do
                         Thickness = 1,
                         Color = Library.Theme.LightContrast, --Library.Theme.Outline,
                         Visible = true,
-                        Filled = true,
-                        ZIndex = 0
+                        Filled = true
                     })
                     --
                     local DropdownGradient = Utility.AddDrawing("Image", {
@@ -3292,7 +3290,7 @@ do
                         Data = Library.Theme.Gradient,
                         Transparency = 1,
                         Visible = true,
-                        ZIndex = 0
+                        ZIndex = 1
                     })
                     --
                     local DropdownTitle = Utility.AddDrawing("Text", {
@@ -3304,7 +3302,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 1
+                        ZIndex = 2
                     })
                     --
                     local DropdownValue = Utility.AddDrawing("Text", {
@@ -3316,7 +3314,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 1
+                        ZIndex = 2
                     })
                     --
                     local DropdownSymbol = Utility.AddDrawing("Text", {
@@ -3328,7 +3326,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 1
+                        ZIndex = 2
                     })
                     --
                     local DropdownDetect = Utility.AddDrawing("Square", {
@@ -3337,7 +3335,7 @@ do
                         Color = Library.Theme.Hitbox, --Library.Theme.Outline,
                         Visible = true,
                         Filled = true,
-                        ZIndex = 0
+                        ZIndex = -6
                     })
                     --
                     function Dropdown:Set(Selected)
@@ -3389,7 +3387,7 @@ do
                             Color = Library.Theme.Inline,
                             Visible = true,
                             Filled = true,
-                            ZIndex = 0
+                            ZIndex = -5
                         })
                         --
                         local SelectionOutline = Utility.AddDrawing("Square", {
@@ -3399,7 +3397,7 @@ do
                             Color = Library.Theme.LightContrast, --Library.Theme.Outline,
                             Visible = true,
                             Filled = true,
-                            ZIndex = 0
+                            ZIndex = -5
                         })
                         --
                         local SelectionGradient = Utility.AddDrawing("Image", {
@@ -3408,7 +3406,7 @@ do
                             Data = Library.Theme.Gradient,
                             Transparency = 1,
                             Visible = true,
-                            ZIndex = 0
+                            ZIndex = -4
                         })
                         --
                         local SelectionTitle = Utility.AddDrawing("Text", {
@@ -3420,7 +3418,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 1
+                            ZIndex = -3
                         })
                             Visible = true,
                             ZIndex = 3
