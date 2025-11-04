@@ -21,6 +21,17 @@
        - Solution: Changed all "Thickness = 0" to "Thickness = 1" (40+ instances)
        - Added automatic Thickness = 1 default in Utility.AddDrawing for all shapes
        - Impact: UI now works on strict executors without errors
+    
+    5. FIXED: Dropdown Menu Rendering Issues (Anime Selector Bug)
+       - Problem: Dropdown list items weren't added to Tab render array
+       - Missing items weren't hidden/shown correctly when switching tabs
+       - Dropdown items had ZIndex = 3 (became 23), overlapping other UI elements
+       - Solution: Added dropdown list items and detect hitbox to Tab["Render"]
+       - Added DropdownDetect visibility control to ShowList function
+       - Added ZIndex = 1 to DropdownGradient for proper layering
+       - Changed dropdown items to ZIndex = -5 to -3 (becomes 15-17 after +20)
+       - Changed DropdownDetect to ZIndex = -6 (becomes 14 after +20)
+       - Impact: Dropdown menus now work correctly across all executors without overlapping
        
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
@@ -998,7 +1009,15 @@ do
         --
         function Window.ToggleAnime(State)
             Window.AnimeEnabled = State
-            Anime.Visible = State and Anime.Data ~= nil
+            if State then
+                -- If toggling on and an anime is set, make sure it's loaded and visible
+                if Window.CurrentAnime then
+                    Window.ChangeAnime(Window.CurrentAnime)
+                end
+            else
+                -- If toggling off, hide the anime
+                Anime.Visible = false
+            end
         end
         --
         local function bindViewportWatcher()
@@ -1021,6 +1040,9 @@ do
                 Window.ChangeAnime(Window.CurrentAnime)
             end
         end)
+        
+        -- Initialize default anime (Astolfo) on window creation, but don't show it yet
+        Window.ChangeAnime("Astolfo")
         --
         function Window.SendNotification(Type, Title, Duration)
             local Notification, Removed = Window.Notification, false
