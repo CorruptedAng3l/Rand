@@ -1162,7 +1162,14 @@ do
                 Value["TabOutline"].Color = Library.Theme.DarkContrast
 
                 for _, Render in pairs(Value["Render"]) do
-                    Render.Visible = false
+                    if type(Render) == "table" and Render[2] == "DropdownItem" then
+                        -- Skip dropdown items, they manage their own visibility
+                    else
+                        if type(Render) == "table" then
+                            Render = Render[1]
+                        end
+                        Render.Visible = false
+                    end
                 end
             end
 
@@ -1176,7 +1183,14 @@ do
             Window.SelectedTab = Tab.CurrentTab
 
             for _, Render in pairs(Tab["Render"]) do
-                Render.Visible = true
+                if type(Render) == "table" and Render[2] == "DropdownItem" then
+                    -- Skip dropdown items, they manage their own visibility
+                else
+                    if type(Render) == "table" then
+                        Render = Render[1]
+                    end
+                    Render.Visible = true
+                end
             end
         end
         --
@@ -3434,11 +3448,11 @@ do
                         Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = selectionGradient
                         Dropdown.ListRender.Texts[optionValue] = selectionTitle
                         --
-                        -- Add dropdown list items to tab render immediately
-                        Tab["Render"][#Tab["Render"] + 1] = selectionInline
-                        Tab["Render"][#Tab["Render"] + 1] = selectionOutline
-                        Tab["Render"][#Tab["Render"] + 1] = selectionGradient
-                        Tab["Render"][#Tab["Render"] + 1] = selectionTitle
+                        -- Add dropdown list items to tab render with special marker
+                        Tab["Render"][#Tab["Render"] + 1] = {selectionInline, "DropdownItem"}
+                        Tab["Render"][#Tab["Render"] + 1] = {selectionOutline, "DropdownItem"}
+                        Tab["Render"][#Tab["Render"] + 1] = {selectionGradient, "DropdownItem"}
+                        Tab["Render"][#Tab["Render"] + 1] = {selectionTitle, "DropdownItem"}
                         --
                         Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
                             if Useless then
