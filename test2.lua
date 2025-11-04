@@ -129,6 +129,12 @@ local InputGUI = Instance.new("ScreenGui", CoreGui)
 --
 -- Aimware = {6, [[{"Outline":"000005","Accent":"c82828","LightText":"e8e8e8","DarkText":"afafaf","LightContrast":"2b2b2b","CursorOutline":"191919","DarkContrast":"191919","TextBorder":"0a0a0a","Inline":"373737"}]]},
 --
+-- Safely get Drawing font (some executors have different names or structures)
+local DefaultFont = 2 -- Fallback to font ID 2 (Plex on most executors)
+if Drawing and Drawing.Fonts then
+    DefaultFont = Drawing.Fonts.Plex or Drawing.Fonts.Monospace or 2
+end
+--
 local Library = {
     Theme = {
         Accent = {
@@ -150,7 +156,7 @@ local Library = {
         DarkContrast = Color3.fromHex("#191919"),
         Text = Color3.fromHex("#e8e8e8"),
         TextInactive = Color3.fromHex("#aaaaaa"),
-        Font = Drawing.Fonts.Plex,
+        Font = DefaultFont,
         TextSize = 13,
         UseOutline = false
     },
