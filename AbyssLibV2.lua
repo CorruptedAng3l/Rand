@@ -3502,6 +3502,15 @@ do
                     Tab["Render"][#Tab["Render"] + 1] = DropdownGradient
                     Tab["Render"][#Tab["Render"] + 1] = DropdownSymbol
                     Tab["Render"][#Tab["Render"] + 1] = DropdownValue
+                    Tab["Render"][#Tab["Render"] + 1] = DropdownDetect
+                    --
+                    -- Add dropdown list items to tab render
+                    for _, Object in pairs(Dropdown.ListRender.Objects) do
+                        Tab["Render"][#Tab["Render"] + 1] = Object
+                    end
+                    for _, TextObject in pairs(Dropdown.ListRender.Texts) do
+                        Tab["Render"][#Tab["Render"] + 1] = TextObject
+                    end
                     --
                     return Dropdown
                 end
