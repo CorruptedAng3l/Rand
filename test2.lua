@@ -31,7 +31,6 @@
        - Added ZIndex = 1 to DropdownGradient for proper layering
        - Changed dropdown items to ZIndex = -5 to -3 (becomes 15-17 after +20)
        - Changed DropdownDetect to ZIndex = -6 (becomes 14 after +20)
-       - Impact: Dropdown menus now work correctly across all executors without overlapping
        
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
@@ -985,12 +984,20 @@ do
                 return
             end
 
-            if not Library.Theme.AnimeCache[Name] then
-                Library.Theme.AnimeCache[Name] = Library.Theme[Name] or Utility.AddImage(asset.path, asset.url)
-                Library.Theme[Name] = Library.Theme.AnimeCache[Name]
+            -- Check cache first, then Library.Theme (loaded by CreateLoader), then download
+            local imageData = Library.Theme.AnimeCache[Name]
+            if not imageData then
+                imageData = Library.Theme[Name]
+                if imageData then
+                    Library.Theme.AnimeCache[Name] = imageData
+                else
+                    -- Download if not available (shouldn't happen if CreateLoader ran properly)
+                    imageData = Utility.AddImage(asset.path, asset.url)
+                    Library.Theme.AnimeCache[Name] = imageData
+                    Library.Theme[Name] = imageData
+                end
             end
 
-            local imageData = Library.Theme.AnimeCache[Name]
             if not imageData then
                 return
             end
@@ -1040,9 +1047,6 @@ do
                 Window.ChangeAnime(Window.CurrentAnime)
             end
         end)
-        
-        -- Initialize default anime (Astolfo) on window creation, but don't show it yet
-        Window.ChangeAnime("Astolfo")
         --
         function Window.SendNotification(Type, Title, Duration)
             local Notification, Removed = Window.Notification, false
