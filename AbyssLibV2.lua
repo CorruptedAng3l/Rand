@@ -3434,6 +3434,12 @@ do
                         Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = selectionGradient
                         Dropdown.ListRender.Texts[optionValue] = selectionTitle
                         --
+                        -- Add dropdown list items to tab render immediately
+                        Tab["Render"][#Tab["Render"] + 1] = selectionInline
+                        Tab["Render"][#Tab["Render"] + 1] = selectionOutline
+                        Tab["Render"][#Tab["Render"] + 1] = selectionGradient
+                        Tab["Render"][#Tab["Render"] + 1] = selectionTitle
+                        --
                         Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
                             if Useless then
                                 return
@@ -3503,14 +3509,6 @@ do
                     Tab["Render"][#Tab["Render"] + 1] = DropdownSymbol
                     Tab["Render"][#Tab["Render"] + 1] = DropdownValue
                     Tab["Render"][#Tab["Render"] + 1] = DropdownDetect
-                    --
-                    -- Add dropdown list items to tab render
-                    for _, Object in pairs(Dropdown.ListRender.Objects) do
-                        Tab["Render"][#Tab["Render"] + 1] = Object
-                    end
-                    for _, TextObject in pairs(Dropdown.ListRender.Texts) do
-                        Tab["Render"][#Tab["Render"] + 1] = TextObject
-                    end
                     --
                     return Dropdown
                 end
