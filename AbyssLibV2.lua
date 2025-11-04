@@ -16,6 +16,13 @@
        - Supports Decimals = 1, 2, 3, etc. (decimal places)
        - Uses math.floor for integers, bracket method for decimals
        
+    4. FIXED: Drawing API Thickness Compatibility Issue
+       - Problem: "Thickness = 0" caused errors in stricter script executors, worked with Potassium, but not Bunni, Now Fixed.
+       - Error: "Thickness must be positive, got 0.000000"
+       - Solution: Changed all instances of "Thickness = 0," to "Thickness = 1,"
+       - Impact: UI now works across all script executors (100+ instances fixed)
+       - Note: Visual appearance unchanged since all shapes use Filled = true
+       
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
     
