@@ -195,7 +195,12 @@ do
     end
     --
     Utility.CLCheck = function()
-        repeat task.wait() until iswindowactive()
+        if iswindowactive then
+            repeat task.wait() until iswindowactive()
+        else
+            task.wait(1) -- Fallback delay if function doesn't exist
+        end
+        
         do
             local InputHandle = Utility.AddInstance("TextBox", {
                 Position = UDim2.new(0, 0, 0, 0)
