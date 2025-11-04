@@ -16,13 +16,6 @@
        - Supports Decimals = 1, 2, 3, etc. (decimal places)
        - Uses math.floor for integers, bracket method for decimals
        
-    4. FIXED: Drawing API Thickness Compatibility Issue
-       - Problem: "Thickness = 0" caused errors in stricter script executors, worked with Potassium, but not Bunni, Now Fixed.
-       - Error: "Thickness must be positive, got 0.000000"
-       - Solution: Changed all instances of "Thickness = 0," to "Thickness = 1,"
-       - Impact: UI now works across all script executors (100+ instances fixed)
-       - Note: Visual appearance unchanged since all shapes use Filled = true
-       
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
     
@@ -1162,13 +1155,21 @@ do
                 Value["TabOutline"].Color = Library.Theme.DarkContrast
 
                 for _, Render in pairs(Value["Render"]) do
-                    if type(Render) == "table" and Render[2] == "DropdownItem" then
-                        -- Skip dropdown items, they manage their own visibility
-                    else
-                        if type(Render) == "table" then
-                            Render = Render[1]
+                    Render.Visible = false
+                end
+
+                if Value.DropdownInstances then
+                    for _, dropdown in ipairs(Value.DropdownInstances) do
+                        if dropdown.Show then
+                            dropdown.Show = false
+                            if dropdown.Side and dropdown.Name and Value.Dropdowns and Value.Dropdowns[dropdown.Side] then
+                                Value.Dropdowns[dropdown.Side][dropdown.Name] = false
+                            end
+                            if dropdown.Symbol then
+                                dropdown.Symbol.Text = "+"
+                            end
                         end
-                        Render.Visible = false
+                        dropdown:ShowList(false)
                     end
                 end
             end
@@ -1183,14 +1184,7 @@ do
             Window.SelectedTab = Tab.CurrentTab
 
             for _, Render in pairs(Tab["Render"]) do
-                if type(Render) == "table" and Render[2] == "DropdownItem" then
-                    -- Skip dropdown items, they manage their own visibility
-                else
-                    if type(Render) == "table" then
-                        Render = Render[1]
-                    end
-                    Render.Visible = true
-                end
+                Render.Visible = true
             end
         end
         --
@@ -3262,6 +3256,7 @@ do
                         Callback = typeof(Options.Callback) == "function" and Options.Callback or function() end
                     }
                     --
+                    Dropdown.Side = Side
                     Options.Flag = Options.Flag or "AWGWJIjgAWJIGIJAWG"
                     Library.Flags[Options.Flag] = Dropdown.Selected
                     --
@@ -3303,6 +3298,7 @@ do
                         ZIndex = 2
                     })
                     --
+                    Dropdown.Name = DropdownTitle.Text
                     local DropdownValue = Utility.AddDrawing("Text", {
                         Text = Dropdown.Selected,
                         Position = Vector2.new(DropdownOutline.Position.X + 4, DropdownOutline.Position.Y),
@@ -3326,6 +3322,7 @@ do
                         Visible = true,
                         ZIndex = 2
                     })
+                    Dropdown.Symbol = DropdownSymbol
                     --
                     local DropdownDetect = Utility.AddDrawing("Square", {
                         Thickness = 1,
@@ -3334,6 +3331,7 @@ do
                         Visible = true,
                         Filled = true
                     })
+                    Dropdown.Detect = DropdownDetect
                     --
                     function Dropdown:Set(Selected)
                         if not Selected or not Dropdown.ListRender.Texts[Selected] then
@@ -3358,7 +3356,7 @@ do
                             Value.Visible = State
                         end
                         --
-                        Tab.Dropdowns[Side][DropdownTitle.Text] = State
+                        Tab.Dropdowns[Dropdown.Side][Dropdown.Name] = State
                     end
                     --
                     Utility.AddConnection(Library.Communication.Event, function(Type, Color)
@@ -3448,18 +3446,12 @@ do
                         Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = selectionGradient
                         Dropdown.ListRender.Texts[optionValue] = selectionTitle
                         --
-                        -- Add dropdown list items to tab render with special marker
-                        Tab["Render"][#Tab["Render"] + 1] = {selectionInline, "DropdownItem"}
-                        Tab["Render"][#Tab["Render"] + 1] = {selectionOutline, "DropdownItem"}
-                        Tab["Render"][#Tab["Render"] + 1] = {selectionGradient, "DropdownItem"}
-                        Tab["Render"][#Tab["Render"] + 1] = {selectionTitle, "DropdownItem"}
-                        --
                         Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
                             if Useless then
                                 return
                             end
-                            for index, dropdownState in pairs(Tab.Dropdowns[Side]) do
-                                if index ~= DropdownTitle.Text and dropdownState then
+                            for index, dropdownState in pairs(Tab.Dropdowns[Dropdown.Side]) do
+                                if index ~= Dropdown.Name and dropdownState then
                                     return
                                 end
                             end
@@ -3480,18 +3472,18 @@ do
                         
                         if Input.UserInputType == Enum.UserInputType.MouseButton1 then
                             if Utility.OnMouse(DropdownInline) then
-                                for Index, Value in pairs(Tab.Dropdowns[Side]) do
-                                    if Index ~= DropdownTitle.Text and Value then
+                                for Index, Value in pairs(Tab.Dropdowns[Dropdown.Side]) do
+                                    if Index ~= Dropdown.Name and Value then
                                         return
                                     end
                                 end
                                 Dropdown.Show = not Dropdown.Show
-                                Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
+                                Tab.Dropdowns[Dropdown.Side][Dropdown.Name] = Dropdown.Show
                                 DropdownSymbol.Text = Dropdown.Show and "-" or "+"
                                 Dropdown:ShowList(Dropdown.Show)
                             elseif not Utility.OnMouse(DropdownDetect) then
                                 Dropdown.Show = false
-                                Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
+                                Tab.Dropdowns[Dropdown.Side][Dropdown.Name] = Dropdown.Show
                                 DropdownSymbol.Text = "+"
                                 Dropdown:ShowList(false)
                             end
@@ -3522,7 +3514,8 @@ do
                     Tab["Render"][#Tab["Render"] + 1] = DropdownGradient
                     Tab["Render"][#Tab["Render"] + 1] = DropdownSymbol
                     Tab["Render"][#Tab["Render"] + 1] = DropdownValue
-                    Tab["Render"][#Tab["Render"] + 1] = DropdownDetect
+                    Tab.DropdownInstances = Tab.DropdownInstances or {}
+                    Tab.DropdownInstances[#Tab.DropdownInstances + 1] = Dropdown
                     --
                     return Dropdown
                 end
