@@ -384,57 +384,86 @@ do
     end
     --
     Utility.SaveConfig = function(Config)
-        writefile(
-            "Abyss/Configs/" .. tostring(game.PlaceId) .. "/" .. Config .. ".json", 
-            HttpService:JSONEncode(UISettings.Flags)
-        )
+        local success, err = pcall(function()
+            writefile(
+                "Abyss/Configs/" .. tostring(game.PlaceId) .. "/" .. Config .. ".json", 
+                HttpService:JSONEncode(Library.Flags)
+            )
+        end)
+        if not success then
+            warn("[AbyssLib SaveConfig Error]: " .. tostring(err))
+        end
+        return success
     end
     --
     Utility.DeleteConfig = function(Config)
-        delfile(
-            "Abyss/Configs/" .. tostring(game.PlaceId) .. "/" .. Config .. ".json"
-        )
+        local success, err = pcall(function()
+            delfile(
+                "Abyss/Configs/" .. tostring(game.PlaceId) .. "/" .. Config .. ".json"
+            )
+        end)
+        if not success then
+            warn("[AbyssLib DeleteConfig Error]: " .. tostring(err))
+        end
+        return success
     end
     --
     Utility.LoadConfig = function(Config)
-        local Config = HttpService:JSONDecode(readfile("Abyss/Configs/" .. tostring(game.PlaceId) .. "/" .. Config .. ".json"))
-        --
-        Library.Flags = LoadedConfig
-        --
-        for Index, Value in pairs(Library.Flags) do
-            if Library.Items[Index].TypeOf == "Keybind" then
-                Library.Items[Index]:Set(Value[1], Value[2], Value[3], true)
-            elseif Library.Items[Index].TypeOf == "Colorpicker" then
-                Library.Items[Index]:SetHue(Value[1])
-                Library.Items[Index]:SetSaturationX(Value[2])
-                Library.Items[Index]:SetSaturationY(Value[3])
-            else
-                Library.Items[Index]:Set(Value)
+        local success, err = pcall(function()
+            local LoadedConfig = HttpService:JSONDecode(readfile("Abyss/Configs/" .. tostring(game.PlaceId) .. "/" .. Config .. ".json"))
+            --
+            Library.Flags = LoadedConfig
+            --
+            for Index, Value in pairs(Library.Flags) do
+                if Library.Items[Index] then
+                    if Library.Items[Index].TypeOf == "Keybind" then
+                        Library.Items[Index]:Set(Value[1], Value[2], Value[3], true)
+                    elseif Library.Items[Index].TypeOf == "Colorpicker" then
+                        Library.Items[Index]:SetHue(Value[1])
+                        Library.Items[Index]:SetSaturationX(Value[2])
+                        Library.Items[Index]:SetSaturationY(Value[3])
+                    else
+                        Library.Items[Index]:Set(Value)
+                    end
+                end
             end
+            --
+            rconsoleinfo("Debug: Loaded a config! 0 error.")
+        end)
+        if not success then
+            warn("[AbyssLib LoadConfig Error]: " .. tostring(err))
         end
-        --
-        rconsoleinfo("Debug: Loaded a config! 0 error.")
+        return success
     end
     --
     Utility.AddFolder = function(GetFolder)
-        local Folder = isfolder(GetFolder)
-        --
-        if Folder then
-            return
-        else
-            makefolder(GetFolder)
-            return true
+        local success, err = pcall(function()
+            local Folder = isfolder(GetFolder)
+            --
+            if not Folder then
+                makefolder(GetFolder)
+                return true
+            end
+        end)
+        if not success then
+            warn("[AbyssLib AddFolder Error]: " .. tostring(err))
         end
+        return success
     end
     --
     Utility.AddImage = function(Image, Url, UI)
         local ImageFile = nil
         --
-        if isfile(Image) then
-            ImageFile = readfile(Image)
-        else
-            ImageFile = game:HttpGet(Url)
-            writefile(Image, ImageFile)
+        local success, err = pcall(function()
+            if isfile(Image) then
+                ImageFile = readfile(Image)
+            else
+                ImageFile = game:HttpGet(Url)
+                writefile(Image, ImageFile)
+            end
+        end)
+        if not success then
+            warn("[AbyssLib AddImage Error]: " .. tostring(err))
         end
         --
         return ImageFile
@@ -655,6 +684,14 @@ do
             Library.Theme.DarkContrast = Config.DarkContrast
             Library.Communication:Fire("DarkContrast", Config.DarkContrast)
         end
+        if Config.Text ~= nil then
+            Library.Theme.Text = Config.Text
+            Library.Communication:Fire("Text", Config.Text)
+        end
+        if Config.TextInactive ~= nil then
+            Library.Theme.TextInactive = Config.TextInactive
+            Library.Communication:Fire("TextInactive", Config.TextInactive)
+        end
     end
     --
     function Library.SelfDestruct()
@@ -689,9 +726,7 @@ do
             Tabs = {},
             LastTab = nil,
             SelectedTab = nil,
-            BindList = "",
-            AnimeEnabled = false,
-            CurrentAnime = nil
+            BindList = ""
         }
         --
         local Blur = Utility.AddDrawing("Image", {
@@ -808,15 +843,6 @@ do
             Transparency = 0.5, 
             Visible = false
         }, Library.Ignores)
-        --
-        local animeAssets = {
-            Astolfo = {path = "Abyss/Assets/UI/Astolfo.png", url = "https://i.imgur.com/T20cWY9.png", size = Vector2.new(412, 605)},
-            Aiko = {path = "Abyss/Assets/UI/Aiko.png", url = "https://i.imgur.com/1gRIdko.png", size = Vector2.new(390, 630)},
-            Rem = {path = "Abyss/Assets/UI/Rem.png", url = "https://i.imgur.com/ykbRkhJ.png", size = Vector2.new(390, 639)},
-            Violet = {path = "Abyss/Assets/UI/Violet.png", url = "https://i.imgur.com/7B56w4a.png", size = Vector2.new(343, 499)},
-            Asuka = {path = "Abyss/Assets/UI/Asuka.png", url = "https://i.imgur.com/3hwztNM.png", size = Vector2.new(415, 601)}
-        }
-        Library.Theme.AnimeCache = Library.Theme.AnimeCache or {}
         --
         local WindowOutline = Utility.AddDrawing("Square", {
             Size = Size,
@@ -954,62 +980,28 @@ do
         Window["PageCover"] = SecondBorderInline
         --
         function Window.ChangeAnime(Name)
-            local asset = animeAssets[Name]
-            if not asset then
-                return
-            end
-
-            if not Camera then
-                return
-            end
-
-            if not Library.Theme.AnimeCache[Name] then
-                Library.Theme.AnimeCache[Name] = Library.Theme[Name] or Utility.AddImage(asset.path, asset.url)
-                Library.Theme[Name] = Library.Theme.AnimeCache[Name]
-            end
-
-            local imageData = Library.Theme.AnimeCache[Name]
-            if not imageData then
-                return
-            end
-
-            Anime.Data = imageData
-            Anime.Size = asset.size
-            Anime.Position = Vector2.new(
-                Camera.ViewportSize.X - asset.size.X - 20,
-                Camera.ViewportSize.Y - asset.size.Y - 20
+            Anime.Data = (
+                Name == "Astolfo" and Library.Theme.Astolfo or
+                Name == "Aiko" and Library.Theme.Aiko or
+                Name == "Rem" and Library.Theme.Rem or
+                Name == "Violet" and Library.Theme.Violet or
+                Name == "Asuka" and Library.Theme.Asuka
             )
-            Window.CurrentAnime = Name
-            if Window.AnimeEnabled then
-                Anime.Visible = true
-            end
+
+            Anime.Size = (
+                Name == "Astolfo" and Vector2.new(412, 605) or
+                Name == "Aiko" and Vector2.new(390, 630) or
+                Name == "Rem" and Vector2.new(390, 639) or
+                Name == "Violet" and Vector2.new(1029 / 3, 1497 / 3) or
+                Name == "Asuka" and Vector2.new(415, 601)
+            )
+
+            Anime.Position = Vector2.new(Camera.ViewportSize.X - 400, Camera.ViewportSize.Y - Anime.Size.Y)
         end
         --
         function Window.ToggleAnime(State)
-            Window.AnimeEnabled = State
-            Anime.Visible = State and Anime.Data ~= nil
+            Anime.Visible = State
         end
-        --
-        local function bindViewportWatcher()
-            if not Camera then
-                return
-            end
-            Utility.AddConnection(Camera:GetPropertyChangedSignal("ViewportSize"), function()
-                if Window.CurrentAnime then
-                    Window.ChangeAnime(Window.CurrentAnime)
-                end
-            end)
-        end
-
-        bindViewportWatcher()
-
-        Utility.AddConnection(Workspace:GetPropertyChangedSignal("CurrentCamera"), function()
-            Camera = Workspace.CurrentCamera
-            bindViewportWatcher()
-            if Window.CurrentAnime and Camera then
-                Window.ChangeAnime(Window.CurrentAnime)
-            end
-        end)
         --
         function Window.SendNotification(Type, Title, Duration)
             local Notification, Removed = Window.Notification, false
@@ -1112,7 +1104,7 @@ do
                 if Type == "UpdateNotification" then
                     Notification -= 1
                     pcall(function()
-                        NotificationInline.Size = Vector2.new(Index, (Notification * 25) + 100)
+                        NotificationInline.Position = Vector2.new(NotificationInline.Position.X, (Notification * 25) + 100)
                         NotificationOutline.Position = Vector2.new(NotificationInline.Position.X + 2, NotificationInline.Position.Y + 2)
                         NotificationText.Position = Vector2.new(NotificationOutline.Position.X + 6, NotificationOutline.Position.Y + 3)
                         NotificationTopline.Position = Vector2.new(NotificationOutline.Position.X, NotificationOutline.Position.Y)
@@ -2469,16 +2461,25 @@ do
                     function Slider:Set(GetValue, ConvertToMin)
                         if GetValue > Slider.Max then return end
                         if GetValue < Slider.Min then return end
+                        if Slider.Max <= Slider.Min then 
+                            warn("[AbyssLib Slider Error]: Max must be greater than Min")
+                            return 
+                        end
                         
                         local DecimalsCon = SafeRoundWithDecimals(GetValue, Slider.Decimals, Slider.Min, Slider.Max)
                         local Percent = 1 - ((Slider.Max - DecimalsCon) / (Slider.Max - Slider.Min))
                         SliderBar.Size = Vector2.new(SliderOutline.Size.X * Percent, SliderOutline.Size.Y)
                         SliderValue.Text = ("%s%s/%s%s"):format(DecimalsCon, Slider.Symbol, Slider.Max, Slider.Symbol)
+                        Slider.Current = GetValue
                         Library.Flags[Options.Flag] = GetValue
                         Slider.Callback(GetValue)
                     end
     
                     function Slider:SetMax(NewMax)
+                        if NewMax <= Slider.Min then 
+                            warn("[AbyssLib Slider Error]: Max must be greater than Min")
+                            return 
+                        end
                         if NewMax < Slider.Current then Slider.Current = NewMax end
                         if Slider.Current < Slider.Min then return end
     
@@ -2492,6 +2493,10 @@ do
                     end
     
                     function Slider:SetMin(NewMin)
+                        if NewMin >= Slider.Max then 
+                            warn("[AbyssLib Slider Error]: Min must be less than Max")
+                            return 
+                        end
                         Slider.Min = NewMin
                         if Slider.Current > Slider.Max then return end
                         if Slider.Current < Slider.Min then return end
@@ -2505,6 +2510,7 @@ do
                     end
     
                     function Slider:Refresh()
+                        if Slider.Max <= Slider.Min then return end
                         local Percent = math.clamp((Mouse.X - SliderOutline.Position.X) / (SliderOutline.Size.X), 0, 1)
                         local Value = Slider.Min + (Slider.Max - Slider.Min) * Percent
                         Value = SafeRoundWithDecimals(Value, Slider.Decimals, Slider.Min, Slider.Max)
@@ -3120,11 +3126,6 @@ do
                         else
                             ColorpickerInline.Color = Library.Theme.Inline
                         end
-                        if Utility.OnMouse(ColorpickerInline) then
-                            ColorpickerInline.Color = Library.Theme.Accent[1]
-                        else
-                            ColorpickerInline.Color = Library.Theme.Inline
-                        end
                         
                         if Input.UserInputType == Enum.UserInputType.MouseMovement then
                             for Index, Value in pairs(Tab.Dropdowns[Side]) do
@@ -3208,35 +3209,16 @@ do
                 end
                 --
                 function Section:Dropdown(Options)
-                    local optionList = Options.List or {""}
-                    if #optionList == 0 then
-                        optionList = {""}
-                    end
-
-                    local function listContains(list, value)
-                        for _, item in ipairs(list) do
-                            if item == value then
-                                return true
-                            end
-                        end
-                        return false
-                    end
-
-                    local defaultSelection = Options.Default
-                    if not defaultSelection or not listContains(optionList, defaultSelection) then
-                        defaultSelection = optionList[1]
-                    end
-
                     local Dropdown = {
                         TypeOf = "Dropdown",
                         Axis = Section.ContentAxis,
-                        List = optionList,
+                        List = List or {""},
                         ListRender = {
                             Texts = {},
                             Objects = {}
                         }, 
                         Show = true,
-                        Selected = defaultSelection,
+                        Selected = Options.Default or Options.List[1],
                         BaseSize = 16,
                         Callback = typeof(Options.Callback) == "function" and Options.Callback or function() end
                     }
@@ -3283,7 +3265,7 @@ do
                     })
                     --
                     local DropdownValue = Utility.AddDrawing("Text", {
-                        Text = Dropdown.Selected,
+                        Text = Options.Default,
                         Position = Vector2.new(DropdownOutline.Position.X + 4, DropdownOutline.Position.Y),
                         Center = false,
                         Outline = false,
@@ -3315,11 +3297,8 @@ do
                     })
                     --
                     function Dropdown:Set(Selected)
-                        if not Selected or not Dropdown.ListRender.Texts[Selected] then
-                            return
-                        end
-                        for _, TextObject in pairs(Dropdown.ListRender.Texts) do
-                            TextObject.Color = Library.Theme.Text
+                        for Index, Value in pairs(Dropdown.ListRender.Texts) do
+                            Value.Color = Library.Theme.Text
                         end
                         Dropdown.ListRender.Texts[Selected].Color = Library.Theme.Accent[1]
                         Dropdown.Selected = Selected
@@ -3354,7 +3333,7 @@ do
                         end
                     end)
                     --
-                    for Index, Value in ipairs(Dropdown.List) do
+                    for Index, Value in pairs(Options.List) do
                         local SelectionInline = Utility.AddDrawing("Square", {
                             Position = Vector2.new(DropdownInline.Position.X, (DropdownInline.Position.Y + (Index * (18)))),
                             Size = Vector2.new(SectionOutline.Size.X - 12, 18),
@@ -3396,55 +3375,49 @@ do
                             ZIndex = 3
                         })
                         --
-                        local optionValue = Value
-                        local selectionInline = SelectionInline
-                        local selectionOutline = SelectionOutline
-                        local selectionGradient = SelectionGradient
-                        local selectionTitle = SelectionTitle
-                        --
                         Utility.AddConnection(Library.Communication.Event, function(Type, Color)
                             if Type == "LightContrast" then
-                                selectionOutline.Color = Color
+                                SelectionOutline.Color = Color
                             elseif Type == "Text" then
-                                selectionTitle.Color = Color
+                                SelectionTitle.Color = Color
                             elseif Type == "Inline" then
-                                selectionInline.Color = Color
+                                SelectionInline.Color = Color
                             end
                         end)
                         --
                         Utility.AddConnection(UserInput.InputChanged, function(Input, Useless)
                             if Input.UserInputType == Enum.UserInputType.MouseMovement then
-                                if Utility.OnMouse(selectionInline) then
-                                    selectionInline.Color = Library.Theme.Accent[1]
+                                if Utility.OnMouse(SelectionInline) then
+                                    SelectionInline.Color = Library.Theme.Accent[1]
                                 else
-                                    selectionInline.Color = Library.Theme.Inline
+                                    SelectionInline.Color = Library.Theme.Inline
                                 end
                             end
                         end)
                         --
-                        Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = selectionInline
-                        Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = selectionOutline
-                        Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = selectionGradient
-                        Dropdown.ListRender.Texts[optionValue] = selectionTitle
+                        Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = SelectionInline
+                        Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = SelectionOutline
+                        Dropdown.ListRender.Objects[#Dropdown.ListRender.Objects + 1] = SelectionGradient
+                        Dropdown.ListRender.Texts[Value] = SelectionTitle
                         --
                         Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
                             if Useless then
                                 return
                             end
-                            for index, dropdownState in pairs(Tab.Dropdowns[Side]) do
-                                if index ~= DropdownTitle.Text and dropdownState then
+                            for Index, Value in pairs(Tab.Dropdowns[Side]) do
+                                if Index ~= DropdownTitle.Text and Value then
                                     return
                                 end
                             end
-                            if Input.UserInputType == Enum.UserInputType.MouseButton1 and Utility.OnMouse(selectionInline) then
-                                Dropdown:Set(optionValue)
+                            if Input.UserInputType == Enum.UserInputType.MouseButton1 and Utility.OnMouse(SelectionInline) then
+                                Dropdown:Set(Value)
                             end
                         end)
                         --
                     end
                     --
                     DropdownDetect.Position = Vector2.new(DropdownInline.Position.X, DropdownInline.Position.Y + DropdownInline.Size.Y)
-                    DropdownDetect.Size = Vector2.new(SectionOutline.Size.X - 12, (#Dropdown.List * Dropdown.BaseSize) + Dropdown.BaseSize)
+                    DropdownDetect.Size = Vector2.new(SectionOutline.Size.X - 12, (#Options.List * Dropdown.BaseSize) + Dropdown.BaseSize)
                     --
                     Dropdown:Set(Dropdown.Selected)
                     Dropdown:ShowList(false)
@@ -4431,8 +4404,21 @@ local Maid = {
 }
 
 Maid.AddConnection = function(Specific, Type, Callback)
-    local Connection = Type:Connect(Callback)
-
+    if not Type or not Callback then
+        warn("[AbyssLib Maid Error]: Invalid connection parameters")
+        return nil
+    end
+    
+    local success, result = pcall(function()
+        return Type:Connect(Callback)
+    end)
+    
+    if not success then
+        warn("[AbyssLib Maid Error]: Failed to connect - " .. tostring(result))
+        return nil
+    end
+    
+    local Connection = result
     Specific = Specific or #Maid.Connections + 1
     Maid.Connections[Specific] = Connection
     
@@ -4440,11 +4426,21 @@ Maid.AddConnection = function(Specific, Type, Callback)
 end
 
 Maid.DelConnection = function(Specific)
-    Maid.Connections[Specific]:Disconnect()
+    if Maid.Connections[Specific] then
+        pcall(function()
+            Maid.Connections[Specific]:Disconnect()
+        end)
+        Maid.Connections[Specific] = nil
+    end
 end
 
 Maid.DisconnectAll = function()
     for Idx, Val in pairs(Maid.Connections) do
-        Val:Disconnect()
+        pcall(function()
+            if Val then
+                Val:Disconnect()
+            end
+        end)
     end
+    Maid.Connections = {}
 end
