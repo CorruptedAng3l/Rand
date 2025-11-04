@@ -15,6 +15,20 @@
        - Now properly handles Decimals = 0 (integers)
        - Supports Decimals = 1, 2, 3, etc. (decimal places)
        - Uses math.floor for integers, bracket method for decimals
+    
+    4. FIXED: Thickness Must Be Positive Error (Cross-Executor Compatibility)
+       - Problem: Some executors enforce Thickness > 0 for Drawing objects
+       - Solution: Changed all "Thickness = 0" to "Thickness = 1" (40+ instances)
+       - Added automatic Thickness = 1 default in Utility.AddDrawing for all shapes
+       - Impact: UI now works on strict executors without errors
+    
+    5. FIXED: Dropdown Menu Rendering Issues (Anime Selector Bug)
+       - Problem: Dropdown list items weren't added to Tab render array
+       - Missing items weren't hidden/shown correctly when switching tabs
+       - Solution: Added dropdown list items and detect hitbox to Tab["Render"]
+       - Added DropdownDetect visibility control to ShowList function
+       - Added ZIndex = 1 to DropdownGradient for proper layering
+       - Impact: Dropdown menus now work correctly across all executors
        
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
@@ -3272,7 +3286,8 @@ do
                         Position = Vector2.new(DropdownInline.Position.X + 1, DropdownInline.Position.Y + 1),
                         Data = Library.Theme.Gradient,
                         Transparency = 1,
-                        Visible = true
+                        Visible = true,
+                        ZIndex = 1
                     })
                     --
                     local DropdownTitle = Utility.AddDrawing("Text", {
@@ -3342,6 +3357,7 @@ do
                             Value.Visible = State
                         end
                         --
+                        DropdownDetect.Visible = State
                         Tab.Dropdowns[Side][DropdownTitle.Text] = State
                     end
                     --
@@ -3453,6 +3469,7 @@ do
                     --
                     Dropdown:Set(Dropdown.Selected)
                     Dropdown:ShowList(false)
+                    DropdownDetect.Visible = false -- Initially hide the detect hitbox
                     --
                     Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
                         
@@ -3500,6 +3517,15 @@ do
                     Tab["Render"][#Tab["Render"] + 1] = DropdownGradient
                     Tab["Render"][#Tab["Render"] + 1] = DropdownSymbol
                     Tab["Render"][#Tab["Render"] + 1] = DropdownValue
+                    Tab["Render"][#Tab["Render"] + 1] = DropdownDetect
+                    
+                    -- Add dropdown list items to render array
+                    for _, obj in ipairs(Dropdown.ListRender.Objects) do
+                        Tab["Render"][#Tab["Render"] + 1] = obj
+                    end
+                    for _, txt in pairs(Dropdown.ListRender.Texts) do
+                        Tab["Render"][#Tab["Render"] + 1] = txt
+                    end
                     --
                     return Dropdown
                 end
