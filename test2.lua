@@ -31,6 +31,7 @@
        - Added ZIndex = 1 to DropdownGradient for proper layering
        - Changed dropdown items to ZIndex = -5 to -3 (becomes 15-17 after +20)
        - Changed DropdownDetect to ZIndex = -6 (becomes 14 after +20)
+       - Impact: Dropdown menus now work correctly across all executors without overlapping
        
     OPTIMIZATIONS & IMPROVEMENTS:
     ==========================
@@ -451,11 +452,27 @@ do
     Utility.AddImage = function(Image, Url, UI)
         local ImageFile = nil
         --
+        if not Image or not Url then
+            warn("AddImage called with nil parameters:", "Image:", Image, "Url:", Url)
+            return nil
+        end
+        --
         if isfile(Image) then
             ImageFile = readfile(Image)
         else
-            ImageFile = game:HttpGet(Url)
-            writefile(Image, ImageFile)
+            local success, result = pcall(function()
+                return game:HttpGet(Url)
+            end)
+            
+            if success then
+                ImageFile = result
+                pcall(function()
+                    writefile(Image, ImageFile)
+                end)
+            else
+                warn("Failed to download image from:", Url, "Error:", result)
+                return nil
+            end
         end
         --
         return ImageFile
@@ -977,10 +994,12 @@ do
         function Window.ChangeAnime(Name)
             local asset = animeAssets[Name]
             if not asset then
+                warn("Anime asset not found:", Name)
                 return
             end
 
             if not Camera then
+                warn("Camera not available")
                 return
             end
 
@@ -992,13 +1011,20 @@ do
                     Library.Theme.AnimeCache[Name] = imageData
                 else
                     -- Download if not available (shouldn't happen if CreateLoader ran properly)
+                    warn("Downloading anime image for:", Name)
                     imageData = Utility.AddImage(asset.path, asset.url)
-                    Library.Theme.AnimeCache[Name] = imageData
-                    Library.Theme[Name] = imageData
+                    if imageData then
+                        Library.Theme.AnimeCache[Name] = imageData
+                        Library.Theme[Name] = imageData
+                    else
+                        warn("Failed to load anime image:", Name)
+                        return
+                    end
                 end
             end
 
             if not imageData then
+                warn("No image data available for:", Name)
                 return
             end
 
