@@ -522,38 +522,52 @@ do
     Utility.AddImage = function(Image, Url, UI)
         local ImageFile = nil
         --
+        print("[AbyssLib]: AddImage called for " .. Image)
+        
         local success, err = pcall(function()
-            -- Try to load from cache first
-            if isfile(Image) then
-                local readSuccess, readResult = pcall(function()
-                    return readfile(Image)
-                end)
-                
-                if readSuccess and readResult and readResult ~= "" and #readResult > 0 then
-                    ImageFile = readResult
-                    print("[AbyssLib]: Loaded cached image: " .. Image .. " (" .. #ImageFile .. " bytes)")
-                else
-                    -- Cache file exists but is corrupted/empty - delete and re-download
-                    warn("[AbyssLib]: Cache file corrupted for " .. Image .. ", re-downloading...")
-                    pcall(function() delfile(Image) end)
-                    
-                    ImageFile = game:HttpGet(Url)
-                    if ImageFile and ImageFile ~= "" and #ImageFile > 0 then
-                        writefile(Image, ImageFile)
-                        print("[AbyssLib]: Re-downloaded and saved: " .. Image .. " (" .. #ImageFile .. " bytes)")
-                    else
-                        warn("[AbyssLib]: Failed to download image from " .. Url .. " - empty response")
+            -- POTASSIUM FIX: Delete any existing corrupted cache files first
+            if isfile and isfile(Image) then
+                print("[AbyssLib]: Found existing cache file, deleting to force re-download...")
+                pcall(function()
+                    if delfile then
+                        delfile(Image)
+                        task.wait(0.1) -- Small delay to ensure file is deleted
                     end
-                end
-            else
-                -- File doesn't exist - download it
-                print("[AbyssLib]: Downloading image from: " .. Url)
-                ImageFile = game:HttpGet(Url)
-                if ImageFile and ImageFile ~= "" and #ImageFile > 0 then
+                end)
+            end
+            
+            -- Download fresh data from URL
+            print("[AbyssLib]: Downloading from URL: " .. Url)
+            local downloadSuccess, downloadData = pcall(function()
+                return game:HttpGet(Url)
+            end)
+            
+            if not downloadSuccess then
+                warn("[AbyssLib]: HttpGet failed - " .. tostring(downloadData))
+                return
+            end
+            
+            print("[AbyssLib]: Download complete. Type=" .. type(downloadData) .. ", Size=" .. tostring(downloadData and #downloadData or 0))
+            
+            -- Validate downloaded data
+            if not downloadData or type(downloadData) ~= "string" or #downloadData < 100 then
+                warn("[AbyssLib]: Downloaded data is invalid (size: " .. tostring(downloadData and #downloadData or 0) .. " bytes)")
+                return
+            end
+            
+            -- Data is valid - assign it
+            ImageFile = downloadData
+            print("[AbyssLib]: Successfully loaded image data (" .. #ImageFile .. " bytes)")
+            
+            -- Try to cache it for next time
+            if writefile then
+                local writeSuccess, writeErr = pcall(function()
                     writefile(Image, ImageFile)
-                    print("[AbyssLib]: Downloaded and saved: " .. Image .. " (" .. #ImageFile .. " bytes)")
+                end)
+                if writeSuccess then
+                    print("[AbyssLib]: Cached image to: " .. Image)
                 else
-                    warn("[AbyssLib]: Failed to download image from " .. Url .. " - empty response")
+                    warn("[AbyssLib]: Failed to cache image - " .. tostring(writeErr))
                 end
             end
         end)
@@ -562,8 +576,12 @@ do
             warn("[AbyssLib AddImage Error]: " .. tostring(err))
         end
         
-        if not ImageFile or ImageFile == "" or #ImageFile == 0 then
-            warn("[AbyssLib]: AddImage returning nil/empty for " .. Image)
+        -- Final validation
+        if not ImageFile or type(ImageFile) ~= "string" or #ImageFile < 100 then
+            warn("[AbyssLib]: AddImage FAILED for " .. Image .. " - Returning nil")
+            warn("[AbyssLib]: ImageFile type=" .. type(ImageFile) .. ", size=" .. tostring(ImageFile and #ImageFile or 0))
+        else
+            print("[AbyssLib]: AddImage SUCCESS for " .. Image .. " (" .. #ImageFile .. " bytes)")
         end
         --
         return ImageFile
