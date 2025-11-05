@@ -536,18 +536,35 @@ do
                 end)
             end
             
-            -- Download fresh data from URL
+            -- Download fresh data from URL using Potassium's request() API
             print("[AbyssLib]: Downloading from URL: " .. Url)
-            local downloadSuccess, downloadData = pcall(function()
-                return game:HttpGet(Url)
+            local downloadSuccess, downloadResponse = pcall(function()
+                -- Use Potassium's request() function instead of game:HttpGet()
+                if request then
+                    return request({
+                        Url = Url,
+                        Method = "GET"
+                    })
+                else
+                    -- Fallback to game:HttpGet if request() not available
+                    return {Body = game:HttpGet(Url), StatusCode = 200}
+                end
             end)
             
             if not downloadSuccess then
-                warn("[AbyssLib]: HttpGet failed - " .. tostring(downloadData))
+                warn("[AbyssLib]: HTTP request failed - " .. tostring(downloadResponse))
                 return
             end
             
-            print("[AbyssLib]: Download complete. Type=" .. type(downloadData) .. ", Size=" .. tostring(downloadData and #downloadData or 0))
+            -- Extract body from response
+            local downloadData = nil
+            if type(downloadResponse) == "table" and downloadResponse.Body then
+                downloadData = downloadResponse.Body
+                print("[AbyssLib]: Request response - StatusCode=" .. tostring(downloadResponse.StatusCode) .. ", Body size=" .. #downloadData)
+            else
+                downloadData = downloadResponse -- Fallback if it returned string directly
+                print("[AbyssLib]: Direct response - Type=" .. type(downloadData) .. ", Size=" .. tostring(downloadData and #downloadData or 0))
+            end
             
             -- Validate downloaded data
             if not downloadData or type(downloadData) ~= "string" or #downloadData < 100 then
