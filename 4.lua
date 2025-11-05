@@ -63,7 +63,7 @@
        - Reduced redundant calculations in render loops
        - Improved memory efficiency in connection management
     
-    POTASSIUM API ENHANCEMENTS:
+    POTASSIUM API:
     ===========================
     
     1. SECURITY: Protected GUI Container
@@ -92,11 +92,6 @@
        - File existence validation in LoadConfig
        - Proper error messages for missing files
        
-    6. FEATURES: Anime Character Display
-       - Restored anime character selection (Astolfo, Aiko, Rem, Violet, Asuka)
-       - Toggle anime visibility in settings
-       - Position adjustments based on character size
-       - Proper transparency and visibility controls
     
     AFFECTED FUNCTIONS:
     ===================
@@ -799,6 +794,37 @@ do
     end
     --
     function Library.Window(Title, Size)
+        -- Ensure folders exist (in case CreateLoader wasn't called)
+        pcall(function()
+            Utility.AddFolder("Abyss")
+            Utility.AddFolder("Abyss/Caches")
+            Utility.AddFolder("Abyss/Assets")
+            Utility.AddFolder("Abyss/Assets/UI")
+            Utility.AddFolder("Abyss/Configs")
+            Utility.AddFolder("Abyss/Scripts")
+        end)
+        
+        -- Ensure core assets are loaded (in case CreateLoader wasn't called)
+        if not Library.Theme.Gradient or Library.Theme.Gradient == "" then
+            pcall(function()
+                Library.Theme.Gradient = Utility.AddImage("Abyss/Assets/UI/Gradient.png", "https://raw.githubusercontent.com/mvonwalk/Exterium/main/Gradient.png")
+                Library.Theme.Hue = Utility.AddImage("Abyss/Assets/UI/Hue.png", "https://raw.githubusercontent.com/mvonwalk/Exterium/main/HuePicker.png")
+                Library.Theme.Saturation = Utility.AddImage("Abyss/Assets/UI/Saturation.png", "https://raw.githubusercontent.com/mvonwalk/Exterium/main/SaturationPicker.png")
+                Library.Theme.SaturationCursor = Utility.AddImage("Abyss/Assets/UI/HueCursor.png", "https://raw.githubusercontent.com/mvonwalk/splix-assets/main/Images-cursor.png")
+            end)
+        end
+        
+        -- Ensure anime images are loaded (in case CreateLoader wasn't called)
+        if not Library.Theme.Astolfo or Library.Theme.Astolfo == "" then
+            pcall(function()
+                Library.Theme.Astolfo = Utility.AddImage("Abyss/Assets/UI/Astolfo.png", "https://i.imgur.com/T20cWY9.png")
+                Library.Theme.Aiko = Utility.AddImage("Abyss/Assets/UI/Aiko.png", "https://i.imgur.com/1gRIdko.png")
+                Library.Theme.Rem = Utility.AddImage("Abyss/Assets/UI/Rem.png", "https://i.imgur.com/ykbRkhJ.png")
+                Library.Theme.Violet = Utility.AddImage("Abyss/Assets/UI/Violet.png", "https://i.imgur.com/7B56w4a.png")
+                Library.Theme.Asuka = Utility.AddImage("Abyss/Assets/UI/Asuka.png", "https://i.imgur.com/3hwztNM.png")
+            end)
+        end
+        
         local Window = {
             Notification = 0,
             Tabs = {},
