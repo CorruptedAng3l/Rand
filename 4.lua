@@ -805,6 +805,8 @@ do
     end
     --
     function Library.Window(Title, Size)
+        print("[AbyssLib DEBUG]: Window() function called with Title=" .. tostring(Title))
+        
         -- Ensure folders exist (in case CreateLoader wasn't called)
         pcall(function()
             Utility.AddFolder("Abyss")
@@ -814,6 +816,9 @@ do
             Utility.AddFolder("Abyss/Configs")
             Utility.AddFolder("Abyss/Scripts")
         end)
+        
+        print("[AbyssLib DEBUG]: Checking if Gradient exists: " .. tostring(Library.Theme.Gradient))
+        print("[AbyssLib DEBUG]: Checking if Astolfo exists: " .. tostring(Library.Theme.Astolfo))
         
         -- Ensure core assets are loaded (in case CreateLoader wasn't called)
         if not Library.Theme.Gradient or Library.Theme.Gradient == "" then
@@ -841,6 +846,8 @@ do
         else
             print("[AbyssLib]: Anime images already loaded (skipping download)")
         end
+        
+        print("[AbyssLib DEBUG]: About to create Window object")
         
         local Window = {
             Notification = 0,
