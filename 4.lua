@@ -523,13 +523,33 @@ do
         local ImageFile = nil
         --
         local success, err = pcall(function()
+            -- Try to load from cache first
             if isfile(Image) then
-                ImageFile = readfile(Image)
-                print("[AbyssLib]: Loaded cached image: " .. Image)
+                local readSuccess, readResult = pcall(function()
+                    return readfile(Image)
+                end)
+                
+                if readSuccess and readResult and readResult ~= "" and #readResult > 0 then
+                    ImageFile = readResult
+                    print("[AbyssLib]: Loaded cached image: " .. Image .. " (" .. #ImageFile .. " bytes)")
+                else
+                    -- Cache file exists but is corrupted/empty - delete and re-download
+                    warn("[AbyssLib]: Cache file corrupted for " .. Image .. ", re-downloading...")
+                    pcall(function() delfile(Image) end)
+                    
+                    ImageFile = game:HttpGet(Url)
+                    if ImageFile and ImageFile ~= "" and #ImageFile > 0 then
+                        writefile(Image, ImageFile)
+                        print("[AbyssLib]: Re-downloaded and saved: " .. Image .. " (" .. #ImageFile .. " bytes)")
+                    else
+                        warn("[AbyssLib]: Failed to download image from " .. Url .. " - empty response")
+                    end
+                end
             else
+                -- File doesn't exist - download it
                 print("[AbyssLib]: Downloading image from: " .. Url)
                 ImageFile = game:HttpGet(Url)
-                if ImageFile and ImageFile ~= "" then
+                if ImageFile and ImageFile ~= "" and #ImageFile > 0 then
                     writefile(Image, ImageFile)
                     print("[AbyssLib]: Downloaded and saved: " .. Image .. " (" .. #ImageFile .. " bytes)")
                 else
@@ -537,11 +557,12 @@ do
                 end
             end
         end)
+        
         if not success then
             warn("[AbyssLib AddImage Error]: " .. tostring(err))
         end
         
-        if not ImageFile or ImageFile == "" then
+        if not ImageFile or ImageFile == "" or #ImageFile == 0 then
             warn("[AbyssLib]: AddImage returning nil/empty for " .. Image)
         end
         --
