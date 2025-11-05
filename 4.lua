@@ -525,13 +525,24 @@ do
         local success, err = pcall(function()
             if isfile(Image) then
                 ImageFile = readfile(Image)
+                print("[AbyssLib]: Loaded cached image: " .. Image)
             else
+                print("[AbyssLib]: Downloading image from: " .. Url)
                 ImageFile = game:HttpGet(Url)
-                writefile(Image, ImageFile)
+                if ImageFile and ImageFile ~= "" then
+                    writefile(Image, ImageFile)
+                    print("[AbyssLib]: Downloaded and saved: " .. Image .. " (" .. #ImageFile .. " bytes)")
+                else
+                    warn("[AbyssLib]: Failed to download image from " .. Url .. " - empty response")
+                end
             end
         end)
         if not success then
             warn("[AbyssLib AddImage Error]: " .. tostring(err))
+        end
+        
+        if not ImageFile or ImageFile == "" then
+            warn("[AbyssLib]: AddImage returning nil/empty for " .. Image)
         end
         --
         return ImageFile
@@ -806,16 +817,19 @@ do
         
         -- Ensure core assets are loaded (in case CreateLoader wasn't called)
         if not Library.Theme.Gradient or Library.Theme.Gradient == "" then
+            print("[AbyssLib]: Loading core UI assets...")
             pcall(function()
                 Library.Theme.Gradient = Utility.AddImage("Abyss/Assets/UI/Gradient.png", "https://raw.githubusercontent.com/mvonwalk/Exterium/main/Gradient.png")
                 Library.Theme.Hue = Utility.AddImage("Abyss/Assets/UI/Hue.png", "https://raw.githubusercontent.com/mvonwalk/Exterium/main/HuePicker.png")
                 Library.Theme.Saturation = Utility.AddImage("Abyss/Assets/UI/Saturation.png", "https://raw.githubusercontent.com/mvonwalk/Exterium/main/SaturationPicker.png")
                 Library.Theme.SaturationCursor = Utility.AddImage("Abyss/Assets/UI/HueCursor.png", "https://raw.githubusercontent.com/mvonwalk/splix-assets/main/Images-cursor.png")
             end)
+            print("[AbyssLib]: Core assets loaded. Gradient=" .. tostring(Library.Theme.Gradient ~= nil and Library.Theme.Gradient ~= ""))
         end
         
         -- Ensure anime images are loaded (in case CreateLoader wasn't called)
         if not Library.Theme.Astolfo or Library.Theme.Astolfo == "" then
+            print("[AbyssLib]: Loading anime character images...")
             pcall(function()
                 Library.Theme.Astolfo = Utility.AddImage("Abyss/Assets/UI/Astolfo.png", "https://i.imgur.com/T20cWY9.png")
                 Library.Theme.Aiko = Utility.AddImage("Abyss/Assets/UI/Aiko.png", "https://i.imgur.com/1gRIdko.png")
@@ -823,6 +837,9 @@ do
                 Library.Theme.Violet = Utility.AddImage("Abyss/Assets/UI/Violet.png", "https://i.imgur.com/7B56w4a.png")
                 Library.Theme.Asuka = Utility.AddImage("Abyss/Assets/UI/Asuka.png", "https://i.imgur.com/3hwztNM.png")
             end)
+            print("[AbyssLib]: Anime images loaded. Astolfo=" .. tostring(Library.Theme.Astolfo ~= nil and Library.Theme.Astolfo ~= ""))
+        else
+            print("[AbyssLib]: Anime images already loaded (skipping download)")
         end
         
         local Window = {
