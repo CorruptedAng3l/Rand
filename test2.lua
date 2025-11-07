@@ -1,58 +1,24 @@
---[[
-    Orion UI Library - Optimized & Improved Version
-    Recode@2024.1.5 | Enhanced 2025
-    
-    Author: ttwiz_z (ttwizz)
-    License: MIT
-    GitHub: https://github.com/ttwizz/Roblox/blob/master/Orion.lua
-    
-    Issues: https://github.com/ttwizz/Roblox/issues
-    Pull requests: https://github.com/ttwizz/Roblox/pulls
-    Discussions: https://github.com/ttwizz/Roblox/discussions
-    
-    twix.cyou/pix
-    
-    IMPROVEMENTS IN THIS VERSION:
-    - Deobfuscated variable names for better readability
-    - Added comprehensive code documentation
-    - Optimized performance with better caching
-    - Improved error handling
-    - Better code organization and structure
-    - Enhanced maintainability
---]]
+local ScriptContext = game:GetService("ScriptContext")  -- Error handling service
+local UserInputService = game:GetService("UserInputService")  -- Input handling
+local TweenService = game:GetService("TweenService")  -- Animation service
+local RunService = game:GetService("RunService")  -- Frame-by-frame updates
+local LocalPlayer = game:GetService("Players").LocalPlayer  -- Current player
+local Mouse = LocalPlayer:GetMouse()  -- Mouse input
+local HttpService = game:GetService("HttpService")  -- JSON encoding/decoding
+local CoreGui = game:GetService("CoreGui")  -- Core GUI parent
+local DebrisService = game:GetService("Debris")  -- Cleanup service
 
---============================================================================
--- ROBLOX SERVICES
---============================================================================
-
-local ScriptContext = game:GetService("ScriptContext")
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
-local HttpService = game:GetService("HttpService")
-local CoreGui = game:GetService("CoreGui")
-local DebrisService = game:GetService("Debris")
-
---============================================================================
--- ERROR SUPPRESSION
---============================================================================
 
 pcall(function()
     if getfenv().getconnections then
-        for _, connection in next, getfenv().getconnections(ScriptContext.Error) do
+        for _, L_33_forvar2 in next, getfenv().getconnections(ScriptContext.Error) do
             pcall(function()
-                connection:Disable()
+                L_33_forvar2:Disable()
             end)
         end
     end
 end)
 
---============================================================================
--- LIBRARY CONFIGURATION
---============================================================================
 
 local OrionLib = {
     Elements = {},
@@ -72,10 +38,6 @@ local OrionLib = {
     SelectedTheme = "Default",
     SaveCfg = false
 }
-
---============================================================================
--- ICON DATABASE (Lucide Icons)
---============================================================================
 
 local IconDatabase = [[
     {
@@ -194,105 +156,252 @@ local IconDatabase = [[
         "truck": "rbxassetid://7743874482",
         "file-output": "rbxassetid://7733788742",
         "gamepad-2": "rbxassetid://7733799795",
-        "rotate-cw": "rbxassetid://7734051784",
-        "text-cursor-input": "rbxassetid://7743872606",
-        "toggle-right": "rbxassetid://7743873734",
-        "bookmark": "rbxassetid://7733690355",
-        "settings-2": "rbxassetid://7743871787",
-        "arrow-right": "rbxassetid://7733673466",
-        "refresh-ccw": "rbxassetid://7734051459",
-        "align-vertical-distribute-center": "rbxassetid://8997382257",
-        "file-plus-2": "rbxassetid://7733785842",
-        "octagon": "rbxassetid://7734021121",
-        "align-justify": "rbxassetid://7733909977",
-        "clock-9": "rbxassetid://8997385358",
-        "x-square": "rbxassetid://7743878737",
-        "arrow-down-right": "rbxassetid://7733911816",
-        "italic": "rbxassetid://7733964917",
-        "mic": "rbxassetid://7734000502",
-        "sun-moon": "rbxassetid://7734068651",
-        "trending-up": "rbxassetid://7743874262",
-        "pause-circle": "rbxassetid://7734021774",
-        "bell-plus": "rbxassetid://7733675140",
-        "square": "rbxassetid://7734068143",
-        "scissors": "rbxassetid://7734052528",
-        "skip-back": "rbxassetid://7734058570",
-        "wallet": "rbxassetid://7743877731",
-        "move-diagonal": "rbxassetid://7734013099",
-        "wifi-off": "rbxassetid://7743878297",
-        "zoom-out": "rbxassetid://7743878977",
-        "music": "rbxassetid://7734020554",
-        "plus-square": "rbxassetid://7734042318",
-        "navigation": "rbxassetid://7734020989",
-        "gitlab": "rbxassetid://7733954469",
-        "trash-2": "rbxassetid://7743873871",
-        "align-left": "rbxassetid://7733910002",
-        "phone-call": "rbxassetid://7734027057",
-        "feather": "rbxassetid://7733777166",
-        "codesandbox": "rbxassetid://7733749414",
-        "repeat": "rbxassetid://7734051342",
-        "archive": "rbxassetid://7733658868",
-        "stop-circle": "rbxassetid://7734068379",
-        "euro": "rbxassetid://7733771980",
+        "network": "rbxassetid://7734021047",
+        "users": "rbxassetid://7743876054",
+        "electricity-off": "rbxassetid://7733771563",
+        "book": "rbxassetid://7733914390",
+        "clock-9": "rbxassetid://8997385485",
+        "corner-down-left": "rbxassetid://7733764327",
+        "locate-fixed": "rbxassetid://7733992424",
+        "bar-chart": "rbxassetid://7733674319",
+        "shield-check": "rbxassetid://7734056411",
+        "signal-low": "rbxassetid://8997387189",
+        "reply-all": "rbxassetid://7734051524",
+        "zoom-in": "rbxassetid://7743878977",
+        "grip-vertical": "rbxassetid://7733955410",
+        "ticket": "rbxassetid://7734086558",
+        "smartphone": "rbxassetid://7734058979",
+        "arrow-big-right": "rbxassetid://7733671493",
+        "tv-2": "rbxassetid://7743874599",
+        "flashlight": "rbxassetid://7733798851",
+        "database": "rbxassetid://7743866778",
+        "plus-square": "rbxassetid://7734040369",
+        "align-justify": "rbxassetid://7733661326",
+        "clipboard-list": "rbxassetid://7733920117",
+        "github": "rbxassetid://7733954058",
+        "columns": "rbxassetid://7733757178",
+        "arrow-big-down": "rbxassetid://7733668653",
+        "cloud-off": "rbxassetid://7733745572",
+        "target": "rbxassetid://7743872758",
+        "skip-back": "rbxassetid://7734058404",
+        "x-circle": "rbxassetid://7743878496",
+        "clock-10": "rbxassetid://8997383876",
+        "align-right": "rbxassetid://7733663582",
+        "clock-5": "rbxassetid://8997384798",
+        "bell-plus": "rbxassetid://7733675181",
+        "battery-medium": "rbxassetid://7733674731",
+        "arrow-down": "rbxassetid://7733672933",
+        "inbox": "rbxassetid://7733964370",
+        "cast": "rbxassetid://7733919326",
+        "gift-card": "rbxassetid://7733945018",
+        "webcam": "rbxassetid://7743877896",
+        "folder-minus": "rbxassetid://7733799022",
+        "scan-line": "rbxassetid://8997386772",
+        "shovel": "rbxassetid://7734056878",
+        "download-cloud": "rbxassetid://7733770689",
+        "list-checks": "rbxassetid://7743869317",
         "file-text": "rbxassetid://7733789088",
+        "codesandbox": "rbxassetid://7733752575",
+        "laptop-2": "rbxassetid://7733965313",
+        "podcast": "rbxassetid://7734042234",
+        "log-out": "rbxassetid://7733992677",
+        "thumbs-up": "rbxassetid://7743873212",
+        "timer": "rbxassetid://7743873443",
+        "text-cursor": "rbxassetid://8997388195",
+        "file-search": "rbxassetid://7733788966",
+        "thermometer": "rbxassetid://7734084149",
+        "bluetooth-off": "rbxassetid://7733914252",
+        "refresh-cw": "rbxassetid://7734051052",
+        "clipboard-check": "rbxassetid://7733919947",
+        "languages": "rbxassetid://7733965249",
+        "asterisk": "rbxassetid://7733673800",
+        "superscript": "rbxassetid://8997388036",
+        "user-check": "rbxassetid://7743875503",
+        "move-diagonal": "rbxassetid://7743870505",
+        "copy": "rbxassetid://7733764083",
+        "bot": "rbxassetid://7733916988",
+        "alarm-minus": "rbxassetid://7733656164",
+        "log-in": "rbxassetid://7733992604",
+        "maximize": "rbxassetid://7733992982",
+        "align-horizontal-space-between": "rbxassetid://8997381854",
+        "brush": "rbxassetid://7733701455",
+        "equal-not": "rbxassetid://7733771726",
+        "upload": "rbxassetid://7743875428",
+        "minus-circle": "rbxassetid://7733998053",
+        "graduation-cap": "rbxassetid://7733955058",
+        "edit-3": "rbxassetid://7733771361",
+        "check": "rbxassetid://7733715400",
+        "scissors": "rbxassetid://7734052570",
+        "info": "rbxassetid://7733964719",
+        "align-horizonal-distribute-start": "rbxassetid://8997381290",
+        "book-open": "rbxassetid://7733687281",
+        "divide-circle": "rbxassetid://7733769152",
+        "file": "rbxassetid://7733793319",
+        "clock-2": "rbxassetid://8997384295",
+        "corner-right-up": "rbxassetid://7733764680",
+        "clover": "rbxassetid://7733747233",
+        "expand": "rbxassetid://7733771982",
+        "gauge": "rbxassetid://7733799969",
+        "phone-outgoing": "rbxassetid://7743871253",
+        "shield-alert": "rbxassetid://7734056326",
+        "paperclip": "rbxassetid://7734021680",
+        "arrow-big-left": "rbxassetid://7733911731",
+        "album": "rbxassetid://7733658133",
+        "bookmark": "rbxassetid://7733692043",
+        "check-circle-2": "rbxassetid://7733710700",
+        "list-ordered": "rbxassetid://7743869411",
+        "delete": "rbxassetid://7733768142",
+        "axe": "rbxassetid://7733674079",
+        "radio": "rbxassetid://7743871662",
+        "octagon": "rbxassetid://7734021165",
+        "git-commit": "rbxassetid://7743868360",
+        "shirt": "rbxassetid://7734056672",
+        "corner-right-down": "rbxassetid://7733764605",
+        "trending-down": "rbxassetid://7743874143",
+        "airplay": "rbxassetid://7733655834",
+        "repeat": "rbxassetid://7734051454",
+        "layers": "rbxassetid://7743868936",
+        "chevron-right": "rbxassetid://7733717755",
+        "chevrons-right": "rbxassetid://7733919682",
+        "folder-plus": "rbxassetid://7733799092",
+        "alarm-check": "rbxassetid://7733655912",
+        "arrow-up-right": "rbxassetid://7733673646",
+        "user-plus": "rbxassetid://7743875759",
+        "file-minus": "rbxassetid://7733936115",
+        "cloud-drizzle": "rbxassetid://7733920226",
+        "stretch-vertical": "rbxassetid://8997387862",
+        "align-vertical-distribute-start": "rbxassetid://8997382428",
+        "unlink": "rbxassetid://7743875149",
+        "wand": "rbxassetid://8997388430",
+        "regex": "rbxassetid://7734051188",
+        "command": "rbxassetid://7733924046",
+        "haze": "rbxassetid://7733955969",
+        "trash": "rbxassetid://7743873871",
+        "battery-full": "rbxassetid://7733674503",
+        "flag-triangle-left": "rbxassetid://7733798509",
+        "server-off": "rbxassetid://7734053361",
+        "loader-2": "rbxassetid://7733989869",
+        "monitor-speaker": "rbxassetid://7743869988",
+        "shuffle": "rbxassetid://7734057059",
+        "tablet": "rbxassetid://7743872620",
+        "cloud-moon": "rbxassetid://7733920519",
+        "clipboard-x": "rbxassetid://7733734668",
+        "pocket": "rbxassetid://7734042139",
+        "watch": "rbxassetid://7743877668",
+        "file-plus": "rbxassetid://7733788885",
+        "locate": "rbxassetid://7733992469",
         "share": "rbxassetid://7734053697",
-        "list-checks": "rbxassetid://7743869464",
-        "chevrons-up": "rbxassetid://7733920008",
-        "git-branch": "rbxassetid://7733949149",
-        "package-open": "rbxassetid://8997386282",
-        "anchor": "rbxassetid://7743867811",
-        "play-circle": "rbxassetid://7734037393",
-        "phone-outgoing": "rbxassetid://7734030019",
-        "align-vertical-justify-start": "rbxassetid://8997382392",
-        "bluetooth-off": "rbxassetid://7733914087",
-        "file-plus": "rbxassetid://7733785925",
-        "maximize-2": "rbxassetid://7733992901",
-        "file": "rbxassetid://7733799646",
-        "cloud": "rbxassetid://7733919937",
-        "droplets": "rbxassetid://7733770755",
-        "bluetooth-connected": "rbxassetid://7733913791",
-        "phone-incoming": "rbxassetid://7743871120",
-        "minimize": "rbxassetid://7734000129",
-        "pause-octagon": "rbxassetid://7734021851",
-        "arrow-down-left": "rbxassetid://7733911816",
-        "chevron-down": "rbxassetid://7733919605",
-        "slash": "rbxassetid://8997387644",
-        "expand": "rbxassetid://7733774319",
-        "move": "rbxassetid://7734013440",
-        "monitor": "rbxassetid://7734000270",
-        "divide": "rbxassetid://7733769365",
-        "list": "rbxassetid://7743869612",
-        "corner-left-down": "rbxassetid://7733764327",
-        "arrow-down": "rbxassetid://7733911942",
-        "align-horizontal-distribute-end": "rbxassetid://8997381374",
-        "corner-down-left": "rbxassetid://7733764142",
-        "twitch": "rbxassetid://7743874740",
-        "clock-10": "rbxassetid://8997383868",
-        "volume-x": "rbxassetid://7743877761",
-        "map-pin": "rbxassetid://7733992974",
+        "thermometer-snowflake": "rbxassetid://7743873074",
+        "volume-1": "rbxassetid://7743877081",
+        "arrow-left-right": "rbxassetid://8997382869",
+        "coffee": "rbxassetid://7733752630",
+        "chevron-last": "rbxassetid://8997383390",
+        "cloud-hail": "rbxassetid://7733920444",
+        "alarm-clock-off": "rbxassetid://7733656003",
+        "pound-sterling": "rbxassetid://7734042354",
+        "tent": "rbxassetid://7734078943",
+        "toggle-left": "rbxassetid://7734091286",
         "dollar-sign": "rbxassetid://7733770599",
-        "twitter": "rbxassetid://7743874795",
-        "zap": "rbxassetid://7743878857",
-        "flag-triangle-left": "rbxassetid://7733798564",
-        "underline": "rbxassetid://7743875041",
-        "arrow-big-right": "rbxassetid://7733911469",
-        "download-cloud": "rbxassetid://7733770628",
-        "clock-4": "rbxassetid://8997384654",
-        "corner-right-down": "rbxassetid://7733764680",
+        "sunrise": "rbxassetid://7743872365",
+        "sunset": "rbxassetid://7734070982",
+        "code": "rbxassetid://7733749837",
+        "thumbs-down": "rbxassetid://7734084236",
+        "trending-up": "rbxassetid://7743874262",
+        "clock-12": "rbxassetid://8997384150",
+        "rocking-chair": "rbxassetid://7734051769",
+        "check-square": "rbxassetid://7733919526",
+        "cpu": "rbxassetid://7733765045",
+        "palette": "rbxassetid://7734021595",
+        "minimize-2": "rbxassetid://7733997870",
+        "cloud-sun": "rbxassetid://7733746880",
+        "copyleft": "rbxassetid://7733764196",
+        "archive": "rbxassetid://7733911621",
+        "building": "rbxassetid://7733701625",
+        "image-minus": "rbxassetid://7733963797",
+        "italic": "rbxassetid://7733964917",
+        "link-2-off": "rbxassetid://7733975283",
+        "sort-asc": "rbxassetid://7734060715",
+        "underline": "rbxassetid://7743874904",
+        "gitlab": "rbxassetid://7733954246",
+        "file-minus-2": "rbxassetid://7733936010",
+        "play-circle": "rbxassetid://7734037784",
+        "clock-8": "rbxassetid://8997385352",
+        "file-input": "rbxassetid://7733935917",
+        "beaker": "rbxassetid://7733674922",
+        "shopping-bag": "rbxassetid://7734056747",
+        "navigation": "rbxassetid://7734020989",
+        "moon": "rbxassetid://7743870134",
+        "align-vertical-space-between": "rbxassetid://8997382793",
+        "glasses": "rbxassetid://7733954403",
+        "clipboard-copy": "rbxassetid://7733920037",
+        "feather": "rbxassetid://7733777166",
+        "skip-forward": "rbxassetid://7734058495",
+        "wind": "rbxassetid://7743878264",
+        "frown": "rbxassetid://7733799591",
+        "move-vertical": "rbxassetid://7743870608",
+        "umbrella": "rbxassetid://7743874820",
+        "package": "rbxassetid://7734021469",
+        "chevrons-up": "rbxassetid://7733723433",
+        "download": "rbxassetid://7733770755",
+        "eye": "rbxassetid://7733774602",
+        "files": "rbxassetid://7743867811",
+        "arrow-down-right": "rbxassetid://7733672831",
+        "code-2": "rbxassetid://7733920644",
+        "wrap-text": "rbxassetid://8997388548",
+        "file-digit": "rbxassetid://7733935829",
+        "x-square": "rbxassetid://7743878737",
+        "clipboard": "rbxassetid://7733734762",
+        "maximize-2": "rbxassetid://7733992901",
+        "send": "rbxassetid://7734053039",
+        "alarm-clock": "rbxassetid://7733656100",
+        "sliders": "rbxassetid://7734058803",
+        "refresh-ccw": "rbxassetid://7734050715",
+        "music": "rbxassetid://7734020554",
+        "banknote": "rbxassetid://7733674153",
+        "hard-drive": "rbxassetid://7733955793",
+        "search": "rbxassetid://7734052925",
+        "layout-list": "rbxassetid://7733970442",
+        "edit": "rbxassetid://7733771472",
+        "contrast": "rbxassetid://7733764005",
+        "wifi": "rbxassetid://7743878148",
+        "swiss-franc": "rbxassetid://7734071038",
+        "ghost": "rbxassetid://7743868000",
+        "laptop": "rbxassetid://7733965386",
+        "clock-4": "rbxassetid://8997384603",
+        "layout-dashboard": "rbxassetid://7733970318",
+        "align-vertical-justify-end": "rbxassetid://8997382584",
+        "circle": "rbxassetid://7733919881",
+        "file-x": "rbxassetid://7733938136",
+        "award": "rbxassetid://7733673987",
+        "corner-left-down": "rbxassetid://7733764448",
+        "arrow-up-left": "rbxassetid://7733673539",
+        "carrot": "rbxassetid://8997382987",
+        "globe-2": "rbxassetid://7733954611",
+        "compass": "rbxassetid://7733924216",
+        "git-branch": "rbxassetid://7733949149",
+        "vibrate": "rbxassetid://7743876302",
+        "pause-circle": "rbxassetid://7734021767",
+        "minus-square": "rbxassetid://7743869899",
+        "mic-off": "rbxassetid://7743869714",
+        "arrow-down-circle": "rbxassetid://7733671763",
+        "move-horizontal": "rbxassetid://7734016210",
+        "chrome": "rbxassetid://7733919783",
+        "radio-receiver": "rbxassetid://7734045155",
+        "shield": "rbxassetid://7734056608",
+        "image-plus": "rbxassetid://7733964016",
+        "more-horizontal": "rbxassetid://7734006080",
+        "slash": "rbxassetid://8997387644",
+        "divide": "rbxassetid://7733769365",
+        "view": "rbxassetid://7743876754",
+        "list": "rbxassetid://7743869612",
         "printer": "rbxassetid://7734042580",
         "corner-left-up": "rbxassetid://7733764536",
-        "zap-off": "rbxassetid://7743878930",
-        "corner-down-right": "rbxassetid://7733764185",
-        "clock-2": "rbxassetid://8997384205",
-        "shuffle": "rbxassetid://7734056983",
-        "bluetooth-searching": "rbxassetid://7733914320",
-        "check-circle-2": "rbxassetid://7733919391",
-        "more-horizontal": "rbxassetid://7734006080",
-        "clock-12": "rbxassetid://8997383975",
+        "meh": "rbxassetid://7733993147",
         "copyright": "rbxassetid://7733764275",
         "align-end-vertical": "rbxassetid://8997380907",
         "heart": "rbxassetid://7733956134",
         "lock": "rbxassetid://7733992528",
+        "align-center": "rbxassetid://7733909776",
         "signal-high": "rbxassetid://8997387110",
         "upload-cloud": "rbxassetid://7743875358",
         "arrow-up-circle": "rbxassetid://7733673466",
@@ -373,1636 +482,1836 @@ local IconDatabase = [[
         "map": "rbxassetid://7733992829",
         "eye-off": "rbxassetid://7733774495",
         "align-end-horizontal": "rbxassetid://8997380820",
-        "user-plus": "rbxassetid://7743875510",
-        "cloud-lightning": "rbxassetid://7733920084",
-        "align-start-vertical": "rbxassetid://8997382098",
-        "arrow-big-down": "rbxassetid://7733911387",
-        "volume-1": "rbxassetid://7743877631",
-        "check": "rbxassetid://7733919390",
-        "layout": "rbxassetid://7733970442",
-        "volume-2": "rbxassetid://7743877679",
-        "cloud-off": "rbxassetid://7733920174",
-        "corner-up-left": "rbxassetid://7733764833",
-        "search": "rbxassetid://7734052925",
-        "user-check": "rbxassetid://7743875327",
-        "bluetooth-off": "rbxassetid://7733914087",
-        "zoom-in": "rbxassetid://7743878901",
-        "wifi": "rbxassetid://7743878358",
-        "sliders": "rbxassetid://7734058803",
-        "alert-octagon": "rbxassetid://7733658271",
-        "chevron-right": "rbxassetid://7733919788",
-        "corner-right-up": "rbxassetid://7733764757",
-        "cpu": "rbxassetid://7733764948",
-        "layout-list": "rbxassetid://7733970390",
-        "mail-open": "rbxassetid://7733992659",
-        "command": "rbxassetid://7733926824",
-        "linkedin": "rbxassetid://7743869612",
-        "chevron-last": "rbxassetid://8997383433",
-        "layers": "rbxassetid://7733967985",
-        "file-minus-2": "rbxassetid://7733781824",
-        "arrow-big-left": "rbxassetid://7733911321",
-        "cloud-drizzle": "rbxassetid://7733920009",
-        "wind": "rbxassetid://7743878264",
-        "align-vertical-distribute-start": "rbxassetid://8997382148",
-        "mic-off": "rbxassetid://7743869714",
-        "arrow-down-circle": "rbxassetid://7733671763",
-        "move-horizontal": "rbxassetid://7734016210",
-        "chrome": "rbxassetid://7733919783",
-        "radio-receiver": "rbxassetid://7734045155",
-        "shield": "rbxassetid://7734056608",
-        "image-plus": "rbxassetid://7733964016",
-        "more-horizontal": "rbxassetid://7734006080",
-        "slash": "rbxassetid://8997387644",
-        "divide": "rbxassetid://7733769365",
-        "view": "rbxassetid://7743876754",
-        "list": "rbxassetid://7743869612",
-        "printer": "rbxassetid://7734042580",
-        "corner-left-up": "rbxassetid://7733764536",
-        "meh": "rbxassetid://7733993147",
-        "copyright": "rbxassetid://7733764275",
-        "align-end-vertical": "rbxassetid://8997380907",
-        "heart": "rbxassetid://7733956134",
-        "lock": "rbxassetid://7733992528",
-        "align-center": "rbxassetid://7733909776",
-        "signal-high": "rbxassetid://8997387110",
-        "upload-cloud": "rbxassetid://7743875358",
-        "arrow-up-circle": "rbxassetid://7733673466",
-        "git-branch-plus": "rbxassetid://7743868200",
-        "align-vertical-justify-center": "rbxassetid://8997382502",
-        "screen-share-off": "rbxassetid://7734052653",
-        "git-pull-request": "rbxassetid://7733952287",
-        "flag": "rbxassetid://7733798691",
-        "star-half": "rbxassetid://7734068258",
-        "minus": "rbxassetid://7734000129",
-        "mountain": "rbxassetid://7734008868",
-        "volume": "rbxassetid://7743877487",
-        "mouse-pointer-2": "rbxassetid://7734010405",
-        "package-x": "rbxassetid://8997386545",
-        "indian-rupee": "rbxassetid://7733964536",
-        "speaker": "rbxassetid://7734063416",
-        "flame": "rbxassetid://7733798747",
-        "circle-slashed": "rbxassetid://8997383530",
-        "crop": "rbxassetid://7733765140",
-        "clock-11": "rbxassetid://8997384034",
-        "circle": "rbxassetid://7733919532",
-        "skip-forward": "rbxassetid://7734058495",
-        "send": "rbxassetid://7734053039",
-        "radio": "rbxassetid://7734045073",
-        "minimize-2": "rbxassetid://7733999901",
-        "separator-horizontal": "rbxassetid://7734053146",
-        "smartphone": "rbxassetid://7734058959",
-        "user": "rbxassetid://7743875382",
-        "layout-grid": "rbxassetid://7733970543",
-        "cloud-rain": "rbxassetid://7733920226",
-        "trending-down": "rbxassetid://7743874188",
-        "fast-forward": "rbxassetid://7733777054",
-        "tablet": "rbxassetid://7734073168",
-        "shopping-cart": "rbxassetid://7734056878",
-        "move-vertical": "rbxassetid://7734018285",
-        "arrow-up-left": "rbxassetid://7733673358",
-        "arrow-big-up": "rbxassetid://7733911554",
-        "arrow-up-right": "rbxassetid://7733673607",
-        "code-2": "rbxassetid://7734042901",
-        "layers": "rbxassetid://7733967985",
-        "bluetooth-connected": "rbxassetid://7733913791",
-        "check-circle": "rbxassetid://7733919470",
-        "edit": "rbxassetid://7733771472",
-        "copy": "rbxassetid://7743868002",
-        "file-edit": "rbxassetid://7733779053",
-        "shopping-bag": "rbxassetid://7734056831",
-        "disc": "rbxassetid://7733769478",
-        "pocket": "rbxassetid://7734040185",
-        "download": "rbxassetid://7733770755",
-        "hash": "rbxassetid://7733955906",
-        "code": "rbxassetid://7743866859",
-        "book-open": "rbxassetid://7733690083",
-        "refresh-cw": "rbxassetid://7734051342",
-        "arrow-down-circle": "rbxassetid://7733671763",
-        "layout-template": "rbxassetid://7733970658",
-        "grip-vertical": "rbxassetid://7733955511",
-        "users": "rbxassetid://7743875598",
-        "instagram": "rbxassetid://7733964719",
-        "log-out": "rbxassetid://7733992604",
-        "crosshair": "rbxassetid://7733765224",
-        "arrow-up": "rbxassetid://7733673717",
-        "maximize": "rbxassetid://7733992901",
-        "arrow-right-circle": "rbxassetid://7733673345",
-        "file-minus": "rbxassetid://7733781886",
-        "bookmark-minus": "rbxassetid://7733690205",
-        "arrow-down": "rbxassetid://7733911942",
-        "music": "rbxassetid://7734020554",
-        "volume-x": "rbxassetid://7743877761",
-        "mic": "rbxassetid://7734000502",
-        "menu": "rbxassetid://7733993211",
-        "align-right": "rbxassetid://7733910088",
-        "plus": "rbxassetid://7734042273",
-        "eye": "rbxassetid://7733774602",
-        "log-in": "rbxassetid://7733992469",
-        "info": "rbxassetid://7733964719",
-        "facebook": "rbxassetid://7733776147",
-        "cloud-snow": "rbxassetid://7733920268",
-        "circle-dot": "rbxassetid://8997383249",
-        "paperclip": "rbxassetid://7734021680",
-        "cast": "rbxassetid://7733919326",
-        "thumbs-up": "rbxassetid://7743873982",
-        "file-warning": "rbxassetid://7733798957",
-        "shopping-cart": "rbxassetid://7734056878",
-        "check-square": "rbxassetid://7733919633",
-        "trash": "rbxassetid://7743873871",
-        "grid": "rbxassetid://7733955393",
-        "x-circle": "rbxassetid://7743878496",
-        "edit-3": "rbxassetid://7733771472",
-        "github": "rbxassetid://7733954058",
-        "align-horizontal-justify-center": "rbxassetid://8997381453",
-        "delete": "rbxassetid://7733768142",
-        "octagon": "rbxassetid://7734021121",
-        "sliders-horizontal": "rbxassetid://7734058656",
-        "user-x": "rbxassetid://7743875556",
-        "toggle-left": "rbxassetid://7743873565",
-        "book": "rbxassetid://7733689496",
+        "cloud-rain": "rbxassetid://7733746651",
+        "contact": "rbxassetid://7743866666",
+        "signal": "rbxassetid://8997387546",
+        "mouse-pointer-click": "rbxassetid://7734010488",
+        "settings-2": "rbxassetid://8997386997",
+        "sidebar-open": "rbxassetid://7734058165",
+        "unlink-2": "rbxassetid://7743875069",
+        "pause-octagon": "rbxassetid://7734021827",
+        "user-minus": "rbxassetid://7743875629",
+        "cloud": "rbxassetid://7733746980",
+        "arrow-right-circle": "rbxassetid://7733673229",
+        "align-horizonal-distribute-center": "rbxassetid://8997381028",
+        "fast-forward": "rbxassetid://7743867090",
+        "volume-2": "rbxassetid://7743877250",
+        "grab": "rbxassetid://7733954884",
+        "arrow-right": "rbxassetid://7733673345",
+        "chevron-down": "rbxassetid://7733717447",
+        "volume-x": "rbxassetid://7743877381",
+        "cloud-snow": "rbxassetid://7733746798",
+        "car": "rbxassetid://7733708835",
+        "bluetooth-connected": "rbxassetid://7734110952",
+        "CD": "rbxassetid://7734110220",
+        "cookie": "rbxassetid://8997385628",
+        "message-square": "rbxassetid://7733993369",
+        "repeat-1": "rbxassetid://7734051342",
+        "codepen": "rbxassetid://7733920768",
+        "voicemail": "rbxassetid://7743876916",
+        "text-cursor-input": "rbxassetid://8997388094",
+        "package-check": "rbxassetid://8997386143",
+        "shopping-cart": "rbxassetid://7734056813",
+        "corner-down-right": "rbxassetid://7733764385",
+        "folder-open": "rbxassetid://8997386062",
+        "charge": "rbxassetid://8997383136",
+        "layout-grid": "rbxassetid://7733970390",
+        "clock": "rbxassetid://7733734848",
+        "corner-up-left": "rbxassetid://7733764800",
+        "align-horizontal-justify-start": "rbxassetid://8997381652",
+        "git-merge": "rbxassetid://7733952195",
+        "verified": "rbxassetid://7743876142",
+        "redo": "rbxassetid://7743871739",
+        "hexagon": "rbxassetid://7743868527",
+        "square": "rbxassetid://7743872181",
+        "align-horizontal-justify-center": "rbxassetid://8997381461",
+        "chevrons-up-down": "rbxassetid://7733723321",
+        "bus": "rbxassetid://7733701715",
+        "file-plus-2": "rbxassetid://7733788816",
+        "alarm-plus": "rbxassetid://7733658066",
+        "divide-square": "rbxassetid://7733769261",
+        "pie-chart": "rbxassetid://7734034378",
+        "signal-zero": "rbxassetid://8997387434",
+        "hammer": "rbxassetid://7733955511",
+        "history": "rbxassetid://7733960880",
+        "align-vertical-justify-start": "rbxassetid://8997382639",
+        "flask-round": "rbxassetid://7733798957",
+        "wifi-off": "rbxassetid://7743878056",
+        "zoom-out": "rbxassetid://7743879082",
+        "toggle-right": "rbxassetid://7743873539",
+        "monitor": "rbxassetid://7734002839",
         "x": "rbxassetid://7743878857",
-        "user-minus": "rbxassetid://7743875455",
-        "log-in": "rbxassetid://7733992469",
-        "check-check": "rbxassetid://8997382798",
-        "codepen": "rbxassetid://7733749630",
-        "layout-dashboard": "rbxassetid://7733970476",
-        "strikethrough": "rbxassetid://7734068433",
-        "tag": "rbxassetid://7734075797",
-        "align-horizontal-justify-start": "rbxassetid://8997381658",
-        "signal-low": "rbxassetid://8997386973",
-        "signal-zero": "rbxassetid://8997387205",
-        "signal": "rbxassetid://7734058219",
-        "signal-medium": "rbxassetid://8997387001",
-        "thumbs-down": "rbxassetid://7743873915",
-        "layout-panel-top": "rbxassetid://8997384835",
-        "align-horizontal-distribute-center": "rbxassetid://8997381266",
-        "align-horizontal-distribute-start": "rbxassetid://8997381182",
-        "git-commit": "rbxassetid://7733949149",
-        "git-merge": "rbxassetid://7733952090",
-        "slack": "rbxassetid://7734058548",
-        "github": "rbxassetid://7733954058",
-        "gitlab": "rbxassetid://7733954469"
+        "align-horizonal-distribute-end": "rbxassetid://8997381144",
+        "user": "rbxassetid://7743875962",
+        "sprout": "rbxassetid://7743872071",
+        "move": "rbxassetid://7743870731",
+        "gavel": "rbxassetid://7733800044",
+        "package-minus": "rbxassetid://8997386266",
+        "drumstick": "rbxassetid://8997385789",
+        "forward": "rbxassetid://7733799371",
+        "sidebar-close": "rbxassetid://7734058092",
+        "electricity": "rbxassetid://7733771628",
+        "plus": "rbxassetid://7734042071",
+        "pipette": "rbxassetid://7743871384",
+        "cloud-lightning": "rbxassetid://7733741741",
+        "lasso-select": "rbxassetid://7743868832",
+        "phone-call": "rbxassetid://7734027264",
+        "droplet": "rbxassetid://7733770982",
+        "key": "rbxassetid://7733965118",
+        "map-pin": "rbxassetid://7733992789",
+        "navigation-2": "rbxassetid://7734020942",
+        "list-minus": "rbxassetid://7733980795",
+        "chevron-up": "rbxassetid://7733919605",
+        "layout-template": "rbxassetid://7733970494",
+        "no_entry": "rbxassetid://7734021118",
+        "scan": "rbxassetid://8997386861",
+        "arrow-big-up": "rbxassetid://7733671663",
+        "bookmark-minus": "rbxassetid://7733689754",
+        "activity": "rbxassetid://7733655755",
+        "grid": "rbxassetid://7733955179",
+        "user-x": "rbxassetid://7743875879",
+        "alert-circle": "rbxassetid://7733658271",
+        "menu": "rbxassetid://7733993211",
+        "form-input": "rbxassetid://7733799275",
+        "rss": "rbxassetid://7734052075",
+        "loader": "rbxassetid://7733992358",
+        "align-vertical-distribute-end": "rbxassetid://8997382326",
+        "strikethrough": "rbxassetid://7734068425",
+        "mic": "rbxassetid://7743869805",
+        "landmark": "rbxassetid://7733965184",
+        "crosshair": "rbxassetid://7733765307",
+        "alert-octagon": "rbxassetid://7733658335",
+        "anchor": "rbxassetid://7733911490",
+        "separator-horizontal": "rbxassetid://7734053146",
+        "chevron-left": "rbxassetid://7733717651",
+        "flask-conical": "rbxassetid://7733798901",
+        "wallet": "rbxassetid://7743877573",
+        "euro": "rbxassetid://7733771891",
+        "trash-2": "rbxassetid://7743873772",
+        "check-circle": "rbxassetid://7733919427",
+        "layout": "rbxassetid://7733970543",
+        "droplets": "rbxassetid://7733771078",
+        "align-start-vertical": "rbxassetid://8997382085",
+        "rotate-cw": "rbxassetid://7734051957",
+        "minimize": "rbxassetid://7733997941",
+        "arrow-down-left": "rbxassetid://7733672282",
+        "signal-medium": "rbxassetid://8997387319",
+        "align-vertical-distribute-center": "rbxassetid://8997382212",
+        "image-off": "rbxassetid://7733963907",
+        "cloudy": "rbxassetid://7733747106",
+        "align-left": "rbxassetid://7733911357",
+        "film": "rbxassetid://7733942579",
+        "chevrons-down": "rbxassetid://7733720604",
+        "pointer": "rbxassetid://7734042307",
+        "folder": "rbxassetid://7733799185",
+        "chevrons-left": "rbxassetid://7733720701",
+        "shield-off": "rbxassetid://7734056540",
+        "wrench": "rbxassetid://7743878358"
       }
     }
 ]]
+pcall(function()
+    IconDatabase = game:HttpGet("https://raw.githubusercontent.com/ttwizz/Documents/master/icons.json", true)
+end)
+IconDatabase = HttpService:JSONDecode(IconDatabase).icons
 
---============================================================================
--- ICON HELPER
---============================================================================
 
-local IconsCache = nil
-
-local function GetIcon(iconName)
-    if not IconsCache then
-        local success, decoded = pcall(function()
-            return HttpService:JSONDecode(IconDatabase)
-        end)
-        if success and decoded and decoded.icons then
-            IconsCache = decoded.icons
-        else
-            IconsCache = {}
-        end
-    end
-    return IconsCache[iconName] or ""
+local MainGui = Instance.new("ScreenGui")
+MainGui.Name = string.lower(string.reverse(string.sub(HttpService:GenerateGUID(false), 1, 8)))
+if getfenv().syn then
+    getfenv().syn.protect_gui(MainGui)
+    MainGui.Parent = CoreGui
+else
+    xpcall(function()
+        MainGui.Parent = getfenv().gethui and getfenv().gethui() or CoreGui
+    end, function()
+        MainGui.DisplayOrder = 9e8
+        MainGui.ResetOnSpawn = false
+        MainGui.Parent = LocalPlayer:WaitForChild("PlayerGui", math.huge)
+    end)
 end
 
---============================================================================
+
+local L_13_ = MainGui.Parent
+
+function OrionLib:IsRunning()
+    return MainGui.Parent == L_13_
+end
+
+
+
+--═══════════════════════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
---============================================================================
+--═══════════════════════════════════════════════════════════════════════════════
 
-local function ConnectSignal(signal, callback)
-    local connection = signal:Connect(callback)
-    table.insert(OrionLib.Connections, connection)
-    return connection
-end
-
-local function MakeDraggable(frame, dragHandle)
-    dragHandle = dragHandle or frame
-    local dragging, dragInput, dragStart, startPos
-    
-    ConnectSignal(dragHandle.InputBegan, function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = frame.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-    
-    ConnectSignal(dragHandle.InputChanged, function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    
-    ConnectSignal(UserInputService.InputChanged, function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            frame.Position = UDim2.new(
-                startPos.X.Scale, 
-                startPos.X.Offset + delta.X,
-                startPos.Y.Scale, 
-                startPos.Y.Offset + delta.Y
-            )
-        end
-    end)
-end
-
-local function TweenObject(object, tweenInfo, properties)
-    local tween = TweenService:Create(object, tweenInfo, properties)
-    tween:Play()
-    return tween
-end
-
-local function SaveConfiguration(placeId)
-    if not OrionLib.SaveCfg then
+-- ConnectSignal: Wrapper for event connections with automatic tracking
+local function L_14_func(L_34_arg1, L_35_arg2)
+    if not OrionLib:IsRunning() then
         return
     end
-    
-    pcall(function()
-        local configData = {}
-        for flagName, flagObject in pairs(OrionLib.Flags) do
-            configData[flagName] = flagObject.Value
-        end
-        
-        local fileName = "OrionConfig_" .. tostring(placeId) .. ".json"
-        local success, encoded = pcall(function()
-            return HttpService:JSONEncode(configData)
-        end)
-        
-        if success then
-            writefile(fileName, encoded)
-        end
-    end)
+    local L_36_ = L_34_arg1:Connect(L_35_arg2)
+    table.insert(OrionLib.Connections, L_36_)
+    return L_36_
 end
 
-local function LoadConfiguration(placeId)
-    if not OrionLib.SaveCfg then
-        return
+
+task.spawn(function()
+    while OrionLib:IsRunning() do
+        task.wait()
     end
-    
+    for _, L_38_forvar2 in next, OrionLib.Connections do
+        L_38_forvar2:Disconnect()
+    end
+end)
+
+
+
+-- MakeDraggable: Makes a UI element draggable by mouse/touch
+local function L_15_func(L_39_arg1, L_40_arg2)
     pcall(function()
-        local fileName = "OrionConfig_" .. tostring(placeId) .. ".json"
-        if isfile(fileName) then
-            local fileContent = readfile(fileName)
-            local success, decoded = pcall(function()
-                return HttpService:JSONDecode(fileContent)
-            end)
-            
-            if success and decoded then
-                for flagName, value in pairs(decoded) do
-                    if OrionLib.Flags[flagName] and OrionLib.Flags[flagName].Set then
-                        OrionLib.Flags[flagName]:Set(value)
+        local L_41_, L_42_, L_43_, L_44_ = false, nil
+        L_14_func(L_39_arg1.InputBegan, function(L_45_arg1)
+            if L_45_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_45_arg1.UserInputType == Enum.UserInputType.Touch then
+                L_41_ = true
+                L_43_ = L_45_arg1.Position
+                L_44_ = L_40_arg2.Position
+                L_45_arg1.Changed:Connect(function()
+                    if L_45_arg1.UserInputState == Enum.UserInputState.End then
+                        L_41_ = false
                     end
+                end)
+            end
+        end)
+        L_14_func(L_39_arg1.InputChanged, function(L_46_arg1)
+            if L_46_arg1.UserInputType == Enum.UserInputType.MouseMovement or L_46_arg1.UserInputType == Enum.UserInputType.Touch then
+                L_42_ = L_46_arg1
+            end
+        end)
+        L_14_func(UserInputService.InputChanged, function(L_47_arg1)
+            if L_47_arg1 == L_42_ and L_41_ then
+                local L_48_ = L_47_arg1.Position - L_43_
+                L_40_arg2.Position = UDim2.new(L_44_.X.Scale, L_44_.X.Offset + L_48_.X, L_44_.Y.Scale, L_44_.Y.Offset + L_48_.Y)
+            end
+        end)
+    end)
+end
+
+
+
+-- CreateInstance: Creates Roblox instances with properties and children
+local function L_16_func(L_49_arg1, L_50_arg2, L_51_arg3)
+    local L_52_ = Instance.new(L_49_arg1)
+    for L_53_forvar1, L_54_forvar2 in next, L_50_arg2 or {} do
+        L_52_[L_53_forvar1] = L_54_forvar2
+    end
+    for _, L_56_forvar2 in next, L_51_arg3 or {} do
+        L_56_forvar2.Parent = L_52_
+    end
+    return L_52_
+end
+
+
+local function L_17_func(L_57_arg1, L_58_arg2)
+    OrionLib.Elements[L_57_arg1] = function(...)
+        return L_58_arg2(...)
+    end
+end
+
+
+local function L_18_func(L_59_arg1, ...)
+
+--═══════════════════════════════════════════════════════════════════════════════
+-- RETURN LIBRARY TO CALLER
+--═══════════════════════════════════════════════════════════════════════════════
+
+    return OrionLib.Elements[L_59_arg1](...)
+end
+
+
+local function L_19_func(L_60_arg1, L_61_arg2)
+    for L_62_forvar1, L_63_forvar2 in next, L_61_arg2 do
+        L_60_arg1[L_62_forvar1] = L_63_forvar2
+    end
+    return L_60_arg1
+end
+
+
+local function L_20_func(L_64_arg1, L_65_arg2)
+    for _, L_67_forvar2 in next, L_65_arg2 do
+        L_67_forvar2.Parent = L_64_arg1
+    end
+    return L_64_arg1
+end
+
+
+local function L_21_func(L_68_arg1, L_69_arg2)
+    local L_70_ = math.floor(L_68_arg1 / L_69_arg2 + math.sign(L_68_arg1) * 0.5) * L_69_arg2
+    if L_70_ < 0 then
+        L_70_ = L_70_ + L_69_arg2
+    end
+    return L_70_
+end
+
+
+local function L_22_func(L_71_arg1)
+    if L_71_arg1:IsA("Frame") or L_71_arg1:IsA("TextButton") then
+        return "BackgroundColor3"
+    elseif L_71_arg1:IsA("ScrollingFrame") then
+        return "ScrollBarImageColor3"
+    elseif L_71_arg1:IsA("UIStroke") then
+        return "Color"
+    elseif L_71_arg1:IsA("TextLabel") or L_71_arg1:IsA("TextBox") then
+        return "TextColor3"
+    elseif L_71_arg1:IsA("ImageLabel") or L_71_arg1:IsA("ImageButton") then
+        return "ImageColor3"
+    end
+end
+
+
+local function L_23_func(L_72_arg1, L_73_arg2)
+    if not OrionLib.ThemeObjects[L_73_arg2] then
+        OrionLib.ThemeObjects[L_73_arg2] = {}
+    end
+    table.insert(OrionLib.ThemeObjects[L_73_arg2], L_72_arg1)
+    L_72_arg1[L_22_func(L_72_arg1)] = OrionLib.Themes[OrionLib.SelectedTheme][L_73_arg2]
+    return L_72_arg1
+end
+
+
+local function L_24_func(L_74_arg1)
+    return {
+        R = L_74_arg1.R * 255,
+        G = L_74_arg1.G * 255,
+        B = L_74_arg1.B * 255
+    }
+end
+
+
+local function L_25_func(L_75_arg1)
+    return Color3.fromRGB(L_75_arg1.R, L_75_arg1.G, L_75_arg1.B)
+end
+
+
+
+-- GetIcon: Retrieves icon asset ID from the database
+local function L_26_func(L_76_arg1)
+    local L_77_ = HttpService:JSONDecode(L_76_arg1)
+    for L_78_forvar1, L_79_forvar2 in next, L_77_ do
+        if OrionLib.Flags[L_78_forvar1] then
+            task.spawn(function()
+                if OrionLib.Flags[L_78_forvar1].Type == "Colorpicker" then
+                    OrionLib.Flags[L_78_forvar1]:Set(L_25_func(L_79_forvar2))
+                else
+                    OrionLib.Flags[L_78_forvar1]:Set(L_79_forvar2)
                 end
+            end)
+        end
+    end
+end
+
+
+
+-- SaveConfiguration: Saves current settings to file
+local function L_27_func(L_80_arg1)
+    local L_81_ = {}
+    for L_82_forvar1, L_83_forvar2 in next, OrionLib.Flags do
+        if L_83_forvar2.Save then
+            if L_83_forvar2.Type == "Colorpicker" then
+                L_81_[L_82_forvar1] = L_24_func(L_83_forvar2.Value)
+            else
+                L_81_[L_82_forvar1] = L_83_forvar2.Value
             end
         end
-    end)
+    end
+    if getfenv().writefile then
+        getfenv().writefile(string.format("%s/%s.txt", OrionLib["Folder"], L_80_arg1), HttpService:JSONEncode(L_81_))
+    end
 end
 
---============================================================================
--- UI ELEMENT CREATORS
---============================================================================
 
-local function CreateInstance(className, properties, children)
-    local instance = Instance.new(className)
-    
-    for property, value in pairs(properties or {}) do
-        if property ~= "Parent" then
-            instance[property] = value
+local L_28_ = {
+    Enum.UserInputType.MouseButton1,
+    Enum.UserInputType.MouseButton2,
+    Enum.UserInputType.MouseButton3
+}
+
+local L_29_ = {
+    Enum.KeyCode.Unknown,
+    Enum.KeyCode.W,
+    Enum.KeyCode.A,
+    Enum.KeyCode.S,
+    Enum.KeyCode.D,
+    Enum.KeyCode.Up,
+    Enum.KeyCode.Left,
+    Enum.KeyCode.Down,
+    Enum.KeyCode.Right,
+    Enum.KeyCode.Slash,
+    Enum.KeyCode.Tab,
+    Enum.KeyCode.Backspace,
+    Enum.KeyCode.Escape
+}
+
+
+local function L_30_func(L_84_arg1, L_85_arg2)
+    for _, L_87_forvar2 in next, L_84_arg1 do
+        if L_87_forvar2 == L_85_arg2 then
+            return true
         end
     end
-    
-    if children then
-        for _, child in ipairs(children) do
-            child.Parent = instance
-        end
-    end
-    
-    if properties and properties.Parent then
-        instance.Parent = properties.Parent
-    end
-    
-    return instance
 end
 
-local function CreateRoundedFrame(backgroundColor, transparency, cornerRadius)
-    local frame = CreateInstance("Frame", {
-        BackgroundColor3 = backgroundColor or Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = transparency or 0,
+
+L_17_func("Corner", function(L_88_arg1, L_89_arg2)
+    local L_90_ = L_16_func("UICorner", {
+        CornerRadius = UDim.new(L_88_arg1 or 0, L_89_arg2 or 4)
+    })
+    return L_90_
+end)
+
+
+L_17_func("Stroke", function(L_91_arg1, L_92_arg2)
+    local L_93_ = L_16_func("UIStroke", {
+        Color = L_91_arg1 or Color3.fromRGB(255, 255, 255),
+        Thickness = L_92_arg2 or 1
+    })
+    return L_93_
+end)
+
+
+L_17_func("List", function(L_94_arg1, L_95_arg2)
+    local L_96_ = L_16_func("UIListLayout", {
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Padding = UDim.new(L_94_arg1 or 0, L_95_arg2 or 0)
+    })
+    return L_96_
+end)
+
+
+L_17_func("Padding", function(L_97_arg1, L_98_arg2, L_99_arg3, L_100_arg4)
+    local L_101_ = L_16_func("UIPadding", {
+        PaddingBottom = UDim.new(0, L_97_arg1 or 4),
+        PaddingLeft = UDim.new(0, L_98_arg2 or 4),
+        PaddingRight = UDim.new(0, L_99_arg3 or 4),
+        PaddingTop = UDim.new(0, L_100_arg4 or 4)
+    })
+    return L_101_
+end)
+
+
+L_17_func("TFrame", function()
+    local L_102_ = L_16_func("Frame", {
+        BackgroundTransparency = 1
+    })
+    return L_102_
+end)
+
+
+L_17_func("Frame", function(L_103_arg1)
+    local L_104_ = L_16_func("Frame", {
+        BackgroundColor3 = L_103_arg1 or Color3.fromRGB(255, 255, 255),
         BorderSizePixel = 0
     })
-    
-    CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, cornerRadius or 5),
-        Parent = frame
-    })
-    
-    return frame
-end
+    return L_104_
+end)
 
-local function CreateTextLabel(text, textSize, properties)
-    properties = properties or {}
-    return CreateInstance("TextLabel", {
-        Text = text or "",
-        TextSize = textSize or 14,
-        TextColor3 = properties.TextColor3 or Color3.fromRGB(255, 255, 255),
-        Font = properties.Font or Enum.Font.Gotham,
+
+L_17_func("RoundFrame", function(L_105_arg1, L_106_arg2, L_107_arg3)
+    local L_108_ = L_16_func("Frame", {
+        BackgroundColor3 = L_105_arg1 or Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0
+    }, {
+        L_16_func("UICorner", {
+            CornerRadius = UDim.new(L_106_arg2, L_107_arg3)
+        })
+    })
+    return L_108_
+end)
+
+
+L_17_func("Button", function()
+    local L_109_ = L_16_func("TextButton", {
+        Text = "",
+        AutoButtonColor = false,
         BackgroundTransparency = 1,
-        TextXAlignment = properties.TextXAlignment or Enum.TextXAlignment.Left,
-        TextYAlignment = properties.TextYAlignment or Enum.TextYAlignment.Center,
-        TextWrapped = properties.TextWrapped or false,
-        TextTruncate = properties.TextTruncate or Enum.TextTruncate.None,
-        Size = properties.Size or UDim2.new(1, 0, 1, 0),
-        Position = properties.Position or UDim2.new(0, 0, 0, 0)
+        BorderSizePixel = 0
     })
-end
+    return L_109_
+end)
 
-local function CreateTextButton(properties)
-    properties = properties or {}
-    return CreateInstance("TextButton", {
-        Text = properties.Text or "",
-        TextSize = properties.TextSize or 14,
-        TextColor3 = properties.TextColor3 or Color3.fromRGB(255, 255, 255),
-        Font = properties.Font or Enum.Font.Gotham,
-        BackgroundColor3 = properties.BackgroundColor3 or Color3.fromRGB(25, 25, 25),
-        BackgroundTransparency = properties.BackgroundTransparency or 0,
+
+L_17_func("ScrollFrame", function(L_110_arg1, L_111_arg2)
+    local L_112_ = L_16_func("ScrollingFrame", {
+        BackgroundTransparency = 1,
+        MidImage = "rbxassetid://7445543667",
+        BottomImage = "rbxassetid://7445543667",
+        TopImage = "rbxassetid://7445543667",
+        ScrollBarImageColor3 = L_110_arg1,
         BorderSizePixel = 0,
-        AutoButtonColor = properties.AutoButtonColor ~= nil and properties.AutoButtonColor or false,
-        Size = properties.Size or UDim2.new(1, 0, 0, 36),
-        Position = properties.Position or UDim2.new(0, 0, 0, 0)
+        ScrollBarThickness = L_111_arg2,
+        CanvasSize = UDim2.new(0, 0, 0, 0)
     })
-end
+    return L_112_
+end)
 
-local function CreateImageLabel(image, properties)
-    properties = properties or {}
-    return CreateInstance("ImageLabel", {
-        Image = image or "",
-        ImageColor3 = properties.ImageColor3 or Color3.fromRGB(255, 255, 255),
-        ImageTransparency = properties.ImageTransparency or 0,
+
+L_17_func("Image", function(L_113_arg1)
+    local L_114_ = L_16_func("ImageLabel", {
+        Image = L_113_arg1,
+        BackgroundTransparency = 1
+    })
+    if IconDatabase[L_113_arg1] then
+        L_114_.Image = IconDatabase[L_113_arg1]
+    end
+    return L_114_
+end)
+
+
+L_17_func("ImageButton", function(L_115_arg1)
+    local L_116_ = L_16_func("ImageButton", {
+        Image = L_115_arg1,
+        BackgroundTransparency = 1
+    })
+    return L_116_
+end)
+
+
+L_17_func("Label", function(L_117_arg1, L_118_arg2, L_119_arg3)
+    local L_120_ = L_16_func("TextLabel", {
+        Text = L_117_arg1 or "",
+        TextColor3 = Color3.fromRGB(240, 240, 240),
+        TextTransparency = L_119_arg3 or 0,
+        TextSize = L_118_arg2 or 15,
+        Font = Enum.Font.Gotham,
+        RichText = true,
         BackgroundTransparency = 1,
-        ScaleType = properties.ScaleType or Enum.ScaleType.Fit,
-        Size = properties.Size or UDim2.new(0, 20, 0, 20),
-        Position = properties.Position or UDim2.new(0, 0, 0, 0)
+        TextXAlignment = Enum.TextXAlignment.Left
     })
-end
+    return L_120_
+end)
 
-local function CreateStroke(color, transparency, thickness)
-    return CreateInstance("UIStroke", {
-        Color = color or Color3.fromRGB(40, 40, 40),
-        Transparency = transparency or 0,
-        Thickness = thickness or 1,
-        ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    })
-end
 
-local function CreateUIListLayout(fillDirection, padding)
-    return CreateInstance("UIListLayout", {
-        FillDirection = fillDirection or Enum.FillDirection.Vertical,
+local L_31_ = L_19_func(L_20_func(L_18_func("TFrame"), {
+    L_19_func(L_18_func("List"), {
+        HorizontalAlignment = Enum.HorizontalAlignment.Center,
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, padding or 6)
+        VerticalAlignment = Enum.VerticalAlignment.Bottom,
+        Padding = UDim.new(0, 5)
     })
-end
+}), {
+    Position = UDim2.new(1, -25, 1, -25),
+    Size = UDim2.new(0, 300, 1, -25),
+    AnchorPoint = Vector2.new(1, 1),
+    Parent = MainGui
+})
 
-local function ApplyTheme(object, themeProperty)
-    OrionLib.ThemeObjects[object] = themeProperty
-    local currentTheme = OrionLib.Themes[OrionLib.SelectedTheme]
-    
-    if themeProperty == "Main" then
-        object.BackgroundColor3 = currentTheme.Main
-    elseif themeProperty == "Second" then
-        object.BackgroundColor3 = currentTheme.Second
-    elseif themeProperty == "Stroke" then
-        object.Color = currentTheme.Stroke
-    elseif themeProperty == "Text" then
-        object.TextColor3 = currentTheme.Text
-    elseif themeProperty == "TextDark" then
-        object.TextColor3 = currentTheme.TextDark
-    elseif themeProperty == "Divider" then
-        object.BackgroundColor3 = currentTheme.Divider
-    end
-    
-    return object
-end
 
-local function GetAllUIComponents(parent)
-    local components = {}
-    
-    components.AddButton = function(options)
-        options = options or {}
-        options.Name = options.Name or "Button"
-        options.Callback = options.Callback or function() end
-        
-        local buttonFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 36),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local button = CreateTextButton({
-            Text = options.Name,
-            TextXAlignment = Enum.TextXAlignment.Center,
-            Size = UDim2.new(1, 0, 1, 0),
-            Parent = buttonFrame
-        })
-        
-        ApplyTheme(button, "Second")
-        
-        local corner = CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 5),
-            Parent = button
-        })
-        
-        local stroke = CreateStroke()
-        stroke.Parent = button
-        ApplyTheme(stroke, "Stroke")
-        
-        ConnectSignal(button.MouseButton1Click, function()
-            TweenObject(button, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {
-                BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-            }):Play()
-            
-            task.wait(0.1)
-            
-            TweenObject(button, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {
-                BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second
-            }):Play()
-            
-            pcall(options.Callback)
-        end)
-        
-        return buttonFrame
-    end
-    
-    components.AddToggle = function(options)
-        options = options or {}
-        options.Name = options.Name or "Toggle"
-        options.Default = options.Default or false
-        options.Callback = options.Callback or function() end
-        options.Flag = options.Flag
-        
-        local toggleState = {
-            Value = options.Default,
-            Type = "Toggle"
-        }
-        
-        local toggleFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 36),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local toggleButton = CreateTextButton({
-            Text = "",
-            Size = UDim2.new(1, 0, 1, 0),
-            Parent = toggleFrame
-        })
-        
-        ApplyTheme(toggleButton, "Second")
-        
-        CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 5),
-            Parent = toggleButton
-        })
-        
-        local stroke = CreateStroke()
-        stroke.Parent = toggleButton
-        ApplyTheme(stroke, "Stroke")
-        
-        local titleLabel = CreateTextLabel(options.Name, 14, {
-            Position = UDim2.new(0, 12, 0, 0),
-            Size = UDim2.new(1, -50, 1, 0),
-            Parent = toggleButton
-        })
-        ApplyTheme(titleLabel, "Text")
-        
-        local toggleIndicator = CreateRoundedFrame(Color3.fromRGB(100, 100, 100), 0, 5)
-        toggleIndicator.Size = UDim2.new(0, 40, 0, 20)
-        toggleIndicator.Position = UDim2.new(1, -50, 0.5, -10)
-        toggleIndicator.Parent = toggleButton
-        
-        local toggleKnob = CreateRoundedFrame(Color3.fromRGB(255, 255, 255), 0, 8)
-        toggleKnob.Size = UDim2.new(0, 16, 0, 16)
-        toggleKnob.Position = UDim2.new(0, 2, 0.5, -8)
-        toggleKnob.Parent = toggleIndicator
-        
-        function toggleState:Set(value)
-            toggleState.Value = value
-            
-            TweenObject(toggleKnob, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Position = value and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-            }):Play()
-            
-            TweenObject(toggleIndicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundColor3 = value and Color3.fromRGB(76, 175, 80) or Color3.fromRGB(100, 100, 100)
-            }):Play()
-            
-            pcall(options.Callback, value)
-            SaveConfiguration(game.PlaceId)
-        end
-        
-        ConnectSignal(toggleButton.MouseButton1Click, function()
-            toggleState:Set(not toggleState.Value)
-        end)
-        
-        toggleState:Set(toggleState.Value)
-        
-        if options.Flag then
-            OrionLib.Flags[options.Flag] = toggleState
-        end
-        
-        return toggleState
-    end
-    
-    components.AddSlider = function(options)
-        options = options or {}
-        options.Name = options.Name or "Slider"
-        options.Min = options.Min or 0
-        options.Max = options.Max or 100
-        options.Default = options.Default or options.Min
-        options.Increment = options.Increment or 1
-        options.ValueName = options.ValueName or ""
-        options.Callback = options.Callback or function() end
-        options.Flag = options.Flag
-        
-        local sliderState = {
-            Value = options.Default,
-            Min = options.Min,
-            Max = options.Max,
-            Increment = options.Increment,
-            Type = "Slider"
-        }
-        
-        local sliderFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 50),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local sliderContainer = CreateRoundedFrame(Color3.fromRGB(25, 25, 25), 0, 5)
-        sliderContainer.Size = UDim2.new(1, 0, 1, 0)
-        sliderContainer.Parent = sliderFrame
-        ApplyTheme(sliderContainer, "Second")
-        
-        local stroke = CreateStroke()
-        stroke.Parent = sliderContainer
-        ApplyTheme(stroke, "Stroke")
-        
-        local titleLabel = CreateTextLabel(options.Name, 14, {
-            Position = UDim2.new(0, 12, 0, 6),
-            Size = UDim2.new(1, -24, 0, 16),
-            Parent = sliderContainer
-        })
-        ApplyTheme(titleLabel, "Text")
-        
-        local valueLabel = CreateTextLabel(tostring(options.Default) .. " " .. options.ValueName, 12, {
-            Position = UDim2.new(1, -12, 0, 6),
-            Size = UDim2.new(0, 0, 0, 16),
-            TextXAlignment = Enum.TextXAlignment.Right,
-            Parent = sliderContainer
-        })
-        ApplyTheme(valueLabel, "TextDark")
-        
-        local sliderTrack = CreateRoundedFrame(Color3.fromRGB(40, 40, 40), 0, 3)
-        sliderTrack.Size = UDim2.new(1, -24, 0, 6)
-        sliderTrack.Position = UDim2.new(0, 12, 1, -16)
-        sliderTrack.Parent = sliderContainer
-        
-        local sliderFill = CreateRoundedFrame(Color3.fromRGB(76, 175, 80), 0, 3)
-        sliderFill.Size = UDim2.new(0, 0, 1, 0)
-        sliderFill.Parent = sliderTrack
-        
-        local sliderKnob = CreateRoundedFrame(Color3.fromRGB(255, 255, 255), 0, 8)
-        sliderKnob.Size = UDim2.new(0, 12, 0, 12)
-        sliderKnob.Position = UDim2.new(0, 0, 0.5, -6)
-        sliderKnob.Parent = sliderTrack
-        
-        function sliderState:Set(value)
-            value = math.clamp(value, options.Min, options.Max)
-            value = math.floor(value / options.Increment + 0.5) * options.Increment
-            sliderState.Value = value
-            
-            local percentage = (value - options.Min) / (options.Max - options.Min)
-            
-            sliderFill.Size = UDim2.new(percentage, 0, 1, 0)
-            sliderKnob.Position = UDim2.new(percentage, 0, 0.5, -6)
-            valueLabel.Text = tostring(value) .. " " .. options.ValueName
-            
-            pcall(options.Callback, value)
-            SaveConfiguration(game.PlaceId)
-        end
-        
-        local dragging = false
-        
-        ConnectSignal(sliderTrack.InputBegan, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-                
-                local function update()
-                    local mousePos = UserInputService:GetMouseLocation().X
-                    local trackPos = sliderTrack.AbsolutePosition.X
-                    local trackSize = sliderTrack.AbsoluteSize.X
-                    local percentage = math.clamp((mousePos - trackPos) / trackSize, 0, 1)
-                    local value = options.Min + (options.Max - options.Min) * percentage
-                    sliderState:Set(value)
-                end
-                
-                update()
-                
-                local connection
-                connection = ConnectSignal(UserInputService.InputChanged, function(input)
-                    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-                        update()
-                    end
-                end)
-            end
-        end)
-        
-        ConnectSignal(UserInputService.InputEnded, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = false
-            end
-        end)
-        
-        sliderState:Set(sliderState.Value)
-        
-        if options.Flag then
-            OrionLib.Flags[options.Flag] = sliderState
-        end
-        
-        return sliderState
-    end
-    
-    components.AddDropdown = function(options)
-        options = options or {}
-        options.Name = options.Name or "Dropdown"
-        options.Default = options.Default or ""
-        options.Options = options.Options or {}
-        options.Callback = options.Callback or function() end
-        options.Flag = options.Flag
-        
-        local dropdownState = {
-            Value = options.Default,
-            Options = options.Options,
-            Type = "Dropdown",
-            Expanded = false
-        }
-        
-        local dropdownFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 36),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local dropdownButton = CreateTextButton({
-            Text = "",
-            Size = UDim2.new(1, 0, 1, 0),
-            Parent = dropdownFrame
-        })
-        
-        ApplyTheme(dropdownButton, "Second")
-        
-        CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 5),
-            Parent = dropdownButton
-        })
-        
-        local stroke = CreateStroke()
-        stroke.Parent = dropdownButton
-        ApplyTheme(stroke, "Stroke")
-        
-        local titleLabel = CreateTextLabel(options.Name, 14, {
-            Position = UDim2.new(0, 12, 0, 0),
-            Size = UDim2.new(1, -50, 1, 0),
-            Parent = dropdownButton
-        })
-        ApplyTheme(titleLabel, "Text")
-        
-        local valueLabel = CreateTextLabel(options.Default, 12, {
-            Position = UDim2.new(1, -12, 0, 0),
-            Size = UDim2.new(0, 0, 1, 0),
-            TextXAlignment = Enum.TextXAlignment.Right,
-            Parent = dropdownButton
-        })
-        ApplyTheme(valueLabel, "TextDark")
-        
-        local optionsList = CreateInstance("Frame", {
+function OrionLib:MakeNotification(L_121_arg1)
+    task.spawn(function()
+        L_121_arg1.Name = L_121_arg1.Name or "Notification"
+        L_121_arg1.Content = L_121_arg1.Content or "Test"
+        L_121_arg1.Image = L_121_arg1.Image or "rbxassetid://4384403532"
+        L_121_arg1.Time = L_121_arg1.Time or 15
+        local L_122_ = L_19_func(L_18_func("TFrame"), {
             Size = UDim2.new(1, 0, 0, 0),
-            Position = UDim2.new(0, 0, 1, 6),
-            BackgroundTransparency = 1,
-            ClipsDescendants = true,
-            Visible = false,
-            Parent = dropdownFrame
+            AutomaticSize = Enum.AutomaticSize.Y,
+            Parent = L_31_
         })
-        
-        local optionsContainer = CreateRoundedFrame(Color3.fromRGB(25, 25, 25), 0, 5)
-        optionsContainer.Size = UDim2.new(1, 0, 1, 0)
-        optionsContainer.Parent = optionsList
-        ApplyTheme(optionsContainer, "Second")
-        
-        local optionsStroke = CreateStroke()
-        optionsStroke.Parent = optionsContainer
-        ApplyTheme(optionsStroke, "Stroke")
-        
-        local optionsLayout = CreateUIListLayout(Enum.FillDirection.Vertical, 0)
-        optionsLayout.Parent = optionsContainer
-        
-        CreateInstance("UIPadding", {
-            PaddingTop = UDim.new(0, 6),
-            PaddingBottom = UDim.new(0, 6),
-            PaddingLeft = UDim.new(0, 6),
-            PaddingRight = UDim.new(0, 6),
-            Parent = optionsContainer
-        })
-        
-        function dropdownState:Refresh(newOptions)
-            dropdownState.Options = newOptions
-            
-            for _, child in ipairs(optionsContainer:GetChildren()) do
-                if child:IsA("TextButton") then
-                    child:Destroy()
-                end
-            end
-            
-            for _, optionName in ipairs(newOptions) do
-                local optionButton = CreateTextButton({
-                    Text = optionName,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Size = UDim2.new(1, 0, 0, 28),
-                    Parent = optionsContainer
-                })
-                
-                ApplyTheme(optionButton, "Main")
-                
-                CreateInstance("UIPadding", {
-                    PaddingLeft = UDim.new(0, 8),
-                    Parent = optionButton
-                })
-                
-                CreateInstance("UICorner", {
-                    CornerRadius = UDim.new(0, 4),
-                    Parent = optionButton
-                })
-                
-                local optionLabel = CreateTextLabel(optionName, 13, {
-                    Size = UDim2.new(1, 0, 1, 0),
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Parent = optionButton
-                })
-                ApplyTheme(optionLabel, "Text")
-                
-                ConnectSignal(optionButton.MouseButton1Click, function()
-                    dropdownState:Set(optionName)
-                    dropdownState:Toggle()
-                end)
-            end
-            
-            optionsList.Size = UDim2.new(1, 0, 0, math.min(#newOptions * 28 + 12, 200))
-        end
-        
-        function dropdownState:Set(value)
-            dropdownState.Value = value
-            valueLabel.Text = value
-            pcall(options.Callback, value)
-            SaveConfiguration(game.PlaceId)
-        end
-        
-        function dropdownState:Toggle()
-            dropdownState.Expanded = not dropdownState.Expanded
-            optionsList.Visible = dropdownState.Expanded
-            
-            TweenObject(dropdownFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                Size = dropdownState.Expanded and 
-                    UDim2.new(1, 0, 0, 36 + optionsList.Size.Y.Offset + 6) or 
-                    UDim2.new(1, 0, 0, 36)
-            }):Play()
-        end
-        
-        ConnectSignal(dropdownButton.MouseButton1Click, function()
-            dropdownState:Toggle()
-        end)
-        
-        dropdownState:Refresh(options.Options)
-        dropdownState:Set(options.Default)
-        
-        if options.Flag then
-            OrionLib.Flags[options.Flag] = dropdownState
-        end
-        
-        return dropdownState
-    end
-    
-    components.AddTextbox = function(options)
-        options = options or {}
-        options.Name = options.Name or "Textbox"
-        options.Default = options.Default or ""
-        options.TextDisappear = options.TextDisappear ~= nil and options.TextDisappear or false
-        options.Callback = options.Callback or function() end
-        options.Flag = options.Flag
-        
-        local textboxState = {
-            Value = options.Default,
-            Type = "Textbox"
-        }
-        
-        local textboxFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 36),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local textboxContainer = CreateRoundedFrame(Color3.fromRGB(25, 25, 25), 0, 5)
-        textboxContainer.Size = UDim2.new(1, 0, 1, 0)
-        textboxContainer.Parent = textboxFrame
-        ApplyTheme(textboxContainer, "Second")
-        
-        local stroke = CreateStroke()
-        stroke.Parent = textboxContainer
-        ApplyTheme(stroke, "Stroke")
-        
-        local titleLabel = CreateTextLabel(options.Name, 14, {
-            Position = UDim2.new(0, 12, 0, 0),
-            Size = UDim2.new(0.5, -12, 1, 0),
-            Parent = textboxContainer
-        })
-        ApplyTheme(titleLabel, "Text")
-        
-        local textbox = CreateInstance("TextBox", {
-            Text = options.Default,
-            PlaceholderText = "Enter text...",
-            TextSize = 13,
-            Font = Enum.Font.Gotham,
-            TextColor3 = Color3.fromRGB(200, 200, 200),
-            BackgroundTransparency = 1,
-            Size = UDim2.new(0.5, -24, 1, 0),
-            Position = UDim2.new(0.5, 0, 0, 0),
-            TextXAlignment = Enum.TextXAlignment.Right,
-            ClearTextOnFocus = false,
-            Parent = textboxContainer
-        })
-        
-        CreateInstance("UIPadding", {
-            PaddingRight = UDim.new(0, 12),
-            Parent = textbox
-        })
-        
-        function textboxState:Set(value)
-            textboxState.Value = value
-            textbox.Text = value
-            pcall(options.Callback, value)
-            SaveConfiguration(game.PlaceId)
-        end
-        
-        ConnectSignal(textbox.FocusLost, function()
-            textboxState:Set(textbox.Text)
-            if options.TextDisappear then
-                textbox.Text = ""
-            end
-        end)
-        
-        if options.Flag then
-            OrionLib.Flags[options.Flag] = textboxState
-        end
-        
-        return textboxState
-    end
-    
-    components.AddLabel = function(options)
-        options = options or {}
-        options.Text = options.Text or "Label"
-        
-        local labelFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 28),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local label = CreateTextLabel(options.Text, 14, {
-            Size = UDim2.new(1, 0, 1, 0),
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextWrapped = true,
-            Parent = labelFrame
-        })
-        ApplyTheme(label, "TextDark")
-        
-        return {
-            Set = function(_, text)
-                label.Text = text
-            end
-        }
-    end
-    
-    components.AddParagraph = function(options)
-        options = options or {}
-        options.Title = options.Title or "Paragraph"
-        options.Content = options.Content or ""
-        
-        local paragraphFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 60),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local container = CreateRoundedFrame(Color3.fromRGB(25, 25, 25), 0, 5)
-        container.Size = UDim2.new(1, 0, 1, 0)
-        container.Parent = paragraphFrame
-        ApplyTheme(container, "Second")
-        
-        local stroke = CreateStroke()
-        stroke.Parent = container
-        ApplyTheme(stroke, "Stroke")
-        
-        CreateInstance("UIPadding", {
-            PaddingTop = UDim.new(0, 10),
-            PaddingBottom = UDim.new(0, 10),
-            PaddingLeft = UDim.new(0, 12),
-            PaddingRight = UDim.new(0, 12),
-            Parent = container
-        })
-        
-        local titleLabel = CreateTextLabel(options.Title, 14, {
-            Size = UDim2.new(1, 0, 0, 18),
-            Font = Enum.Font.GothamBold,
-            Parent = container
-        })
-        ApplyTheme(titleLabel, "Text")
-        
-        local contentLabel = CreateTextLabel(options.Content, 13, {
-            Size = UDim2.new(1, 0, 1, -22),
-            Position = UDim2.new(0, 0, 0, 22),
-            TextWrapped = true,
-            TextYAlignment = Enum.TextYAlignment.Top,
-            Parent = container
-        })
-        ApplyTheme(contentLabel, "TextDark")
-        
-        return {
-            Set = function(_, title, content)
-                titleLabel.Text = title
-                contentLabel.Text = content
-            end
-        }
-    end
-    
-    components.AddColorpicker = function(options)
-        options = options or {}
-        options.Name = options.Name or "Colorpicker"
-        options.Default = options.Default or Color3.fromRGB(255, 255, 255)
-        options.Callback = options.Callback or function() end
-        options.Flag = options.Flag
-        
-        local hue, sat, val = 0, 1, 1
-        local color = options.Default
-        local h, s, v = Color3.toHSV(color)
-        hue, sat, val = h, s, v
-        
-        local colorpickerState = {
-            Value = color,
-            Toggled = false,
-            Type = "Colorpicker"
-        }
-        
-        local colorpickerFrame = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 38),
-            BackgroundTransparency = 1,
-            Parent = parent
-        })
-        
-        local headerButton = CreateTextButton({
-            Text = "",
-            Size = UDim2.new(1, 0, 1, 0),
-            Parent = colorpickerFrame
-        })
-        ApplyTheme(headerButton, "Second")
-        
-        CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 5),
-            Parent = headerButton
-        })
-        
-        local stroke = CreateStroke()
-        stroke.Parent = headerButton
-        ApplyTheme(stroke, "Stroke")
-        
-        local titleLabel = CreateTextLabel(options.Name, 14, {
-            Position = UDim2.new(0, 12, 0, 0),
-            Size = UDim2.new(1, -50, 1, 0),
-            Parent = headerButton
-        })
-        ApplyTheme(titleLabel, "Text")
-        
-        local colorDisplay = CreateRoundedFrame(color, 0, 5)
-        colorDisplay.Size = UDim2.new(0, 24, 0, 24)
-        colorDisplay.Position = UDim2.new(1, -34, 0.5, -12)
-        colorDisplay.Parent = headerButton
-        
-        local displayStroke = CreateStroke()
-        displayStroke.Parent = colorDisplay
-        ApplyTheme(displayStroke, "Stroke")
-        
-        local pickerContainer = CreateInstance("Frame", {
-            Size = UDim2.new(1, 0, 0, 110),
-            Position = UDim2.new(0, 0, 1, 6),
-            BackgroundTransparency = 1,
-            ClipsDescendants = true,
-            Visible = false,
-            Parent = colorpickerFrame
-        })
-        
-        local pickerFrame = CreateRoundedFrame(Color3.fromRGB(25, 25, 25), 0, 5)
-        pickerFrame.Size = UDim2.new(1, 0, 1, 0)
-        pickerFrame.Parent = pickerContainer
-        ApplyTheme(pickerFrame, "Second")
-        
-        local pickerStroke = CreateStroke()
-        pickerStroke.Parent = pickerFrame
-        ApplyTheme(pickerStroke, "Stroke")
-        
-        CreateInstance("UIPadding", {
-            PaddingTop = UDim.new(0, 10),
-            PaddingBottom = UDim.new(0, 10),
-            PaddingLeft = UDim.new(0, 10),
-            PaddingRight = UDim.new(0, 10),
-            Parent = pickerFrame
-        })
-        
-        local satValSelector = CreateInstance("ImageLabel", {
-            Image = "rbxassetid://4155801252",
-            ImageColor3 = Color3.fromHSV(hue, 1, 1),
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BorderSizePixel = 0,
-            Size = UDim2.new(1, -70, 1, 0),
-            Position = UDim2.new(0, 0, 0, 0),
-            Parent = pickerFrame
-        })
-        
-        CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 4),
-            Parent = satValSelector
-        })
-        
-        local satValKnob = CreateRoundedFrame(Color3.fromRGB(255, 255, 255), 0, 8)
-        satValKnob.Size = UDim2.new(0, 8, 0, 8)
-        satValKnob.Position = UDim2.new(sat, 0, 1 - val, 0)
-        satValKnob.AnchorPoint = Vector2.new(0.5, 0.5)
-        satValKnob.Parent = satValSelector
-        
-        local satValStroke = CreateStroke(Color3.fromRGB(0, 0, 0), 0, 2)
-        satValStroke.Parent = satValKnob
-        
-        local hueSelector = CreateInstance("ImageLabel", {
-            Image = "rbxassetid://3641079629",
-            ImageColor3 = Color3.fromRGB(255, 255, 255),
-            ImageRectSize = Vector2.new(1, 256),
-            BackgroundTransparency = 1,
-            ScaleType = Enum.ScaleType.Crop,
-            Size = UDim2.new(0, 50, 1, 0),
-            Position = UDim2.new(1, -50, 0, 0),
-            Parent = pickerFrame
-        })
-        
-        CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 4),
-            Parent = hueSelector
-        })
-        
-        local hueKnob = CreateRoundedFrame(Color3.fromRGB(255, 255, 255), 0, 6)
-        hueKnob.Size = UDim2.new(1, 0, 0, 6)
-        hueKnob.Position = UDim2.new(0.5, 0, 1 - hue, 0)
-        hueKnob.AnchorPoint = Vector2.new(0.5, 0.5)
-        hueKnob.Parent = hueSelector
-        
-        local hueStroke = CreateStroke(Color3.fromRGB(0, 0, 0), 0, 2)
-        hueStroke.Parent = hueKnob
-        
-        function colorpickerState:Set(newColor)
-            colorpickerState.Value = newColor
-            colorDisplay.BackgroundColor3 = newColor
-            pcall(options.Callback, newColor)
-            SaveConfiguration(game.PlaceId)
-        end
-        
-        local function updateColor()
-            local newColor = Color3.fromHSV(hue, sat, val)
-            satValSelector.ImageColor3 = Color3.fromHSV(hue, 1, 1)
-            colorpickerState:Set(newColor)
-        end
-        
-        hue = 1 - math.clamp((hueKnob.AbsolutePosition.Y - hueSelector.AbsolutePosition.Y) / hueSelector.AbsoluteSize.Y, 0, 1)
-        sat = math.clamp((satValKnob.AbsolutePosition.X - satValSelector.AbsolutePosition.X) / satValSelector.AbsoluteSize.X, 0, 1)
-        val = 1 - math.clamp((satValKnob.AbsolutePosition.Y - satValSelector.AbsolutePosition.Y) / satValSelector.AbsoluteSize.Y, 0, 1)
-        
-        local satValDragging = false
-        ConnectSignal(satValSelector.InputBegan, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                satValDragging = true
-                
-                local function update()
-                    local mousePos = UserInputService:GetMouseLocation()
-                    sat = math.clamp((mousePos.X - satValSelector.AbsolutePosition.X) / satValSelector.AbsoluteSize.X, 0, 1)
-                    val = 1 - math.clamp((mousePos.Y - satValSelector.AbsolutePosition.Y) / satValSelector.AbsoluteSize.Y, 0, 1)
-                    satValKnob.Position = UDim2.new(sat, 0, 1 - val, 0)
-                    updateColor()
-                end
-                
-                update()
-                
-                local connection
-                connection = ConnectSignal(RunService.RenderStepped, function()
-                    if satValDragging then
-                        update()
-                    else
-                        connection:Disconnect()
-                    end
-                end)
-            end
-        end)
-        
-        ConnectSignal(satValSelector.InputEnded, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                satValDragging = false
-            end
-        end)
-        
-        local hueDragging = false
-        ConnectSignal(hueSelector.InputBegan, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                hueDragging = true
-                
-                local function update()
-                    local mousePos = UserInputService:GetMouseLocation()
-                    local percentage = math.clamp((mousePos.Y - hueSelector.AbsolutePosition.Y) / hueSelector.AbsoluteSize.Y, 0, 1)
-                    hue = 1 - percentage
-                    hueKnob.Position = UDim2.new(0.5, 0, percentage, 0)
-                    updateColor()
-                end
-                
-                update()
-                
-                local connection
-                connection = ConnectSignal(RunService.RenderStepped, function()
-                    if hueDragging then
-                        update()
-                    else
-                        connection:Disconnect()
-                    end
-                end)
-            end
-        end)
-        
-        ConnectSignal(hueSelector.InputEnded, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                hueDragging = false
-            end
-        end)
-        
-        ConnectSignal(headerButton.MouseButton1Click, function()
-            colorpickerState.Toggled = not colorpickerState.Toggled
-            pickerContainer.Visible = colorpickerState.Toggled
-            
-            TweenObject(colorpickerFrame, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Size = colorpickerState.Toggled and UDim2.new(1, 0, 0, 154) or UDim2.new(1, 0, 0, 38)
-            }):Play()
-        end)
-        
-        colorpickerState:Set(colorpickerState.Value)
-        
-        if options.Flag then
-            OrionLib.Flags[options.Flag] = colorpickerState
-        end
-        
-        return colorpickerState
-    end
-    
-    return components
-end
-
---============================================================================
--- MAIN WINDOW CREATION
---============================================================================
-
-function OrionLib:MakeWindow(options)
-    options = options or {}
-    options.Name = options.Name or "Orion Library"
-    options.HidePremium = options.HidePremium ~= nil and options.HidePremium or false
-    options.SaveConfig = options.SaveConfig ~= nil and options.SaveConfig or false
-    options.ConfigFolder = options.ConfigFolder or "OrionConfig"
-    options.IntroEnabled = options.IntroEnabled ~= nil and options.IntroEnabled or true
-    options.IntroText = options.IntroText or "Orion Library"
-    options.IntroIcon = options.IntroIcon or "rbxassetid://7733960981"
-    options.Icon = options.Icon or "rbxassetid://7733960981"
-    
-    OrionLib.SaveCfg = options.SaveConfig
-    
-    local screenGui
-    if gethui then
-        screenGui = gethui()
-    elseif syn and syn.protect_gui then
-        screenGui = Instance.new("ScreenGui")
-        syn.protect_gui(screenGui)
-        screenGui.Parent = CoreGui
-    else
-        screenGui = CoreGui
-    end
-    
-    local mainGui = CreateInstance("ScreenGui", {
-        Name = "OrionLib",
-        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        ResetOnSpawn = false,
-        Parent = screenGui
-    })
-    
-    local mainFrame = CreateRoundedFrame(Color3.fromRGB(20, 20, 20), 0, 10)
-    mainFrame.Size = UDim2.new(0, 600, 0, 450)
-    mainFrame.Position = UDim2.new(0.5, -300, 0.5, -225)
-    mainFrame.ClipsDescendants = true
-    mainFrame.Parent = mainGui
-    ApplyTheme(mainFrame, "Main")
-    
-    local mainStroke = CreateStroke()
-    mainStroke.Parent = mainFrame
-    ApplyTheme(mainStroke, "Stroke")
-    
-    local titleBar = CreateInstance("Frame", {
-        Size = UDim2.new(1, 0, 0, 40),
-        BackgroundTransparency = 1,
-        Parent = mainFrame
-    })
-    
-    local titleIcon = CreateImageLabel(options.Icon, {
-        Size = UDim2.new(0, 20, 0, 20),
-        Position = UDim2.new(0, 15, 0, 10),
-        Parent = titleBar
-    })
-    
-    local titleLabel = CreateTextLabel(options.Name, 16, {
-        Position = UDim2.new(0, 45, 0, 0),
-        Size = UDim2.new(1, -100, 1, 0),
-        Font = Enum.Font.GothamBold,
-        Parent = titleBar
-    })
-    ApplyTheme(titleLabel, "Text")
-    
-    if not options.HidePremium then
-        local premiumLabel = CreateTextLabel("Premium", 12, {
-            Position = UDim2.new(1, -80, 0, 0),
-            Size = UDim2.new(0, 70, 1, 0),
-            TextXAlignment = Enum.TextXAlignment.Right,
-            TextColor3 = Color3.fromRGB(255, 215, 0),
-            Parent = titleBar
-        })
-    end
-    
-    local closeButton = CreateTextButton({
-        Text = "×",
-        TextSize = 24,
-        Size = UDim2.new(0, 40, 0, 40),
-        Position = UDim2.new(1, -40, 0, 0),
-        BackgroundTransparency = 1,
-        Parent = titleBar
-    })
-    ApplyTheme(closeButton, "Text")
-    
-    ConnectSignal(closeButton.MouseButton1Click, function()
-        OrionLib:Destroy()
-    end)
-    
-    local divider = CreateInstance("Frame", {
-        Size = UDim2.new(1, 0, 0, 1),
-        Position = UDim2.new(0, 0, 0, 40),
-        BorderSizePixel = 0,
-        Parent = mainFrame
-    })
-    ApplyTheme(divider, "Divider")
-    
-    local tabContainer = CreateInstance("Frame", {
-        Size = UDim2.new(0, 150, 1, -41),
-        Position = UDim2.new(0, 0, 0, 41),
-        BackgroundTransparency = 1,
-        Parent = mainFrame
-    })
-    
-    local tabListLayout = CreateUIListLayout(Enum.FillDirection.Vertical, 4)
-    tabListLayout.Parent = tabContainer
-    
-    CreateInstance("UIPadding", {
-        PaddingTop = UDim.new(0, 10),
-        PaddingLeft = UDim.new(0, 10),
-        PaddingRight = UDim.new(0, 10),
-        Parent = tabContainer
-    })
-    
-    local tabDivider = CreateInstance("Frame", {
-        Size = UDim2.new(0, 1, 1, -41),
-        Position = UDim2.new(0, 150, 0, 41),
-        BorderSizePixel = 0,
-        Parent = mainFrame
-    })
-    ApplyTheme(tabDivider, "Divider")
-    
-    local contentContainer = CreateInstance("Frame", {
-        Size = UDim2.new(1, -151, 1, -41),
-        Position = UDim2.new(0, 151, 0, 41),
-        BackgroundTransparency = 1,
-        Parent = mainFrame
-    })
-    
-    MakeDraggable(mainFrame, titleBar)
-    
-    if options.IntroEnabled then
-        mainFrame.Visible = false
-        
-        local introFrame = CreateRoundedFrame(Color3.fromRGB(20, 20, 20), 0, 10)
-        introFrame.Size = UDim2.new(0, 400, 0, 200)
-        introFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
-        introFrame.Parent = mainGui
-        ApplyTheme(introFrame, "Main")
-        
-        local introStroke = CreateStroke()
-        introStroke.Parent = introFrame
-        ApplyTheme(introStroke, "Stroke")
-        
-        local introIcon = CreateImageLabel(options.IntroIcon, {
-            Size = UDim2.new(0, 60, 0, 60),
-            Position = UDim2.new(0.5, -30, 0, 40),
-            Parent = introFrame
-        })
-        
-        local introTitle = CreateTextLabel(options.IntroText, 20, {
-            Position = UDim2.new(0, 0, 0, 110),
-            Size = UDim2.new(1, 0, 0, 30),
-            Font = Enum.Font.GothamBold,
-            TextXAlignment = Enum.TextXAlignment.Center,
-            Parent = introFrame
-        })
-        ApplyTheme(introTitle, "Text")
-        
-        local introSubtitle = CreateTextLabel("Loading...", 14, {
-            Position = UDim2.new(0, 0, 0, 145),
-            Size = UDim2.new(1, 0, 0, 20),
-            TextXAlignment = Enum.TextXAlignment.Center,
-            Parent = introFrame
-        })
-        ApplyTheme(introSubtitle, "TextDark")
-        
-        task.spawn(function()
-            task.wait(1.5)
-            TweenObject(introFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                BackgroundTransparency = 1
-            }):Play()
-            
-            for _, child in ipairs(introFrame:GetDescendants()) do
-                if child:IsA("TextLabel") or child:IsA("ImageLabel") then
-                    TweenObject(child, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                        TextTransparency = 1,
-                        ImageTransparency = 1
-                    }):Play()
-                elseif child:IsA("UIStroke") then
-                    TweenObject(child, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                        Transparency = 1
-                    }):Play()
-                end
-            end
-            
-            task.wait(0.5)
-            introFrame:Destroy()
-            mainFrame.Visible = true
-        end)
-    end
-    
-    local Window = {
-        Tabs = {},
-        CurrentTab = nil
-    }
-    
-    function Window:MakeTab(options)
-        options = options or {}
-        options.Name = options.Name or "Tab"
-        options.Icon = options.Icon or "rbxassetid://7733960981"
-        options.PremiumOnly = options.PremiumOnly or false
-        
-        local Tab = {
-            Name = options.Name,
-            Active = false
-        }
-        
-        local tabButton = CreateTextButton({
-            Text = "",
-            Size = UDim2.new(1, 0, 0, 36),
-            BackgroundTransparency = 0.95,
-            Parent = tabContainer
-        })
-        
-        CreateInstance("UICorner", {
-            CornerRadius = UDim.new(0, 5),
-            Parent = tabButton
-        })
-        
-        local tabIcon = CreateImageLabel(GetIcon(options.Icon), {
-            Size = UDim2.new(0, 18, 0, 18),
-            Position = UDim2.new(0, 10, 0.5, -9),
-            Parent = tabButton
-        })
-        ApplyTheme(tabIcon, "TextDark")
-        
-        local tabLabel = CreateTextLabel(options.Name, 13, {
-            Position = UDim2.new(0, 36, 0, 0),
-            Size = UDim2.new(1, -36, 1, 0),
-            Parent = tabButton
-        })
-        ApplyTheme(tabLabel, "Text")
-        
-        local tabContent = CreateInstance("ScrollingFrame", {
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-            ScrollBarThickness = 4,
-            ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60),
-            CanvasSize = UDim2.new(0, 0, 0, 0),
-            Visible = false,
-            Parent = contentContainer
-        })
-        
-        local contentLayout = CreateUIListLayout(Enum.FillDirection.Vertical, 8)
-        contentLayout.Parent = tabContent
-        
-        CreateInstance("UIPadding", {
-            PaddingTop = UDim.new(0, 15),
-            PaddingBottom = UDim.new(0, 15),
-            PaddingLeft = UDim.new(0, 15),
-            PaddingRight = UDim.new(0, 15),
-            Parent = tabContent
-        })
-        
-        ConnectSignal(contentLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-            tabContent.CanvasSize = UDim2.new(0, 0, 0, contentLayout.AbsoluteContentSize.Y + 30)
-        end)
-        
-        function Tab:Activate()
-            if Window.CurrentTab then
-                Window.CurrentTab:Deactivate()
-            end
-            
-            Tab.Active = true
-            Window.CurrentTab = Tab
-            tabContent.Visible = true
-            
-            TweenObject(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                BackgroundTransparency = 0
-            }):Play()
-            
-            ApplyTheme(tabButton, "Second")
-        end
-        
-        function Tab:Deactivate()
-            Tab.Active = false
-            tabContent.Visible = false
-            
-            TweenObject(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                BackgroundTransparency = 0.95
-            }):Play()
-        end
-        
-        ConnectSignal(tabButton.MouseButton1Click, function()
-            if not Tab.Active then
-                Tab:Activate()
-            end
-        end)
-        
-        local tabComponents = GetAllUIComponents(tabContent)
-        
-        function Tab:AddSection(options)
-            options = options or {}
-            options.Name = options.Name or "Section"
-            
-            local sectionFrame = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 26),
-                BackgroundTransparency = 1,
-                Parent = tabContent
-            })
-            
-            local sectionLabel = CreateTextLabel(options.Name, 14, {
-                Size = UDim2.new(1, -12, 0, 16),
-                Position = UDim2.new(0, 0, 0, 3),
+        local L_123_ = L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(25, 25, 25), 0, 5), {
+            Parent = L_122_,
+            Size = UDim2.new(1, 0, 0, 0),
+            Position = UDim2.new(1, -55, 0, 0),
+            BackgroundTransparency = 0,
+            AutomaticSize = Enum.AutomaticSize.Y
+        }), {
+            L_18_func("Stroke", Color3.fromRGB(93, 93, 93), 1.2),
+            L_18_func("Padding", 12, 12, 12, 12),
+            L_19_func(L_18_func("Image", L_121_arg1.Image), {
+                Size = UDim2.new(0, 20, 0, 20),
+                ImageColor3 = Color3.fromRGB(240, 240, 240),
+                Name = "Icon"
+            }),
+            L_19_func(L_18_func("Label", L_121_arg1.Name, 15), {
+                Size = UDim2.new(1, -30, 0, 20),
+                Position = UDim2.new(0, 30, 0, 0),
+                Font = Enum.Font.GothamBold,
+                Name = "Title"
+            }),
+            L_19_func(L_18_func("Label", L_121_arg1.Content, 14), {
+                Size = UDim2.new(1, 0, 0, 0),
+                Position = UDim2.new(0, 0, 0, 25),
                 Font = Enum.Font.GothamMedium,
-                Parent = sectionFrame
+                Name = "Content",
+                AutomaticSize = Enum.AutomaticSize.Y,
+                TextColor3 = Color3.fromRGB(200, 200, 200),
+                TextWrapped = true
             })
-            ApplyTheme(sectionLabel, "TextDark")
-            
-            local sectionContent = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 1, -24),
-                Position = UDim2.new(0, 0, 0, 23),
-                BackgroundTransparency = 1,
-                Parent = sectionFrame
-            })
-            
-            local sectionLayout = CreateUIListLayout(Enum.FillDirection.Vertical, 6)
-            sectionLayout.Parent = sectionContent
-            
-            ConnectSignal(sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-                sectionFrame.Size = UDim2.new(1, 0, 0, sectionLayout.AbsoluteContentSize.Y + 31)
-                sectionContent.Size = UDim2.new(1, 0, 0, sectionLayout.AbsoluteContentSize.Y)
-            end)
-            
-            local Section = GetAllUIComponents(sectionContent)
-            return Section
-        end
-        
-        for methodName, method in pairs(tabComponents) do
-            Tab[methodName] = method
-        end
-        
-        table.insert(Window.Tabs, Tab)
-        
-        if #Window.Tabs == 1 then
-            Tab:Activate()
-        end
-        
-        return Tab
-    end
-    
-    if options.SaveConfig then
-        LoadConfiguration(game.PlaceId)
-    end
-    
-    return Window
+        })
+        TweenService:Create(L_123_, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {
+            Position = UDim2.new(0, 0, 0, 0)
+        }):Play()
+        task.wait(L_121_arg1.Time - 0.88)
+        TweenService:Create(L_123_.Icon, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {
+            ImageTransparency = 1
+        }):Play()
+        TweenService:Create(L_123_, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {
+            BackgroundTransparency = 0.6
+        }):Play()
+        task.wait(0.3)
+        TweenService:Create(L_123_.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {
+            Transparency = 0.9
+        }):Play()
+        TweenService:Create(L_123_.Title, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {
+            TextTransparency = 0.4
+        }):Play()
+        TweenService:Create(L_123_.Content, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {
+            TextTransparency = 0.5
+        }):Play()
+        task.wait(0.05)
+        L_123_:TweenPosition(UDim2.new(1, 20, 0, 0), "In", "Quint", 0.8, true)
+        DebrisService:AddItem(L_123_, 1.35)
+    end)
 end
 
---============================================================================
--- THEME MANAGEMENT
---============================================================================
 
-function OrionLib:SetTheme(themeName)
-    if OrionLib.Themes[themeName] then
-        OrionLib.SelectedTheme = themeName
-        local theme = OrionLib.Themes[themeName]
+function OrionLib:Init()
+    pcall(function()
+        if OrionLib.SaveCfg and getfenv().isfile and getfenv().readfile and getfenv().isfile(string.format("%s/%s.txt", OrionLib["Folder"], game.PlaceId)) then
+            L_26_func(getfenv().readfile(string.format("%s/%s.txt", OrionLib["Folder"], game.PlaceId)))
+            OrionLib:MakeNotification({
+                Name = "Configuration",
+                Content = string.format("Auto-loaded configuration for the place %s.", game.PlaceId),
+                Time = 5
+            })
+        end
+    end)
+end
+
+
+
+--═══════════════════════════════════════════════════════════════════════════════
+-- MAIN WINDOW CREATION
+--═══════════════════════════════════════════════════════════════════════════════
+
+function OrionLib:MakeWindow(L_124_arg1)
+    local L_125_ = false
+    local L_126_ = false
+    local L_127_ = false
+    L_124_arg1 = L_124_arg1 or {}
+    L_124_arg1.Name = L_124_arg1.Name or "Orion Library"
+    L_124_arg1.ConfigFolder = L_124_arg1.ConfigFolder or L_124_arg1.Name
+    L_124_arg1.SaveConfig = L_124_arg1.SaveConfig or false
+    L_124_arg1.TestMode = L_124_arg1.TestMode or false
+    if L_124_arg1.IntroEnabled == nil then
+        L_124_arg1.IntroEnabled = true
+    end
+    L_124_arg1.IntroText = L_124_arg1.IntroText or "Orion Library"
+    L_124_arg1.CloseCallback = L_124_arg1.CloseCallback or function() end
+    L_124_arg1.ShowIcon = L_124_arg1.ShowIcon or false
+    L_124_arg1.Icon = L_124_arg1.Icon or "rbxassetid://8834748103"
+    L_124_arg1.IntroIcon = L_124_arg1.IntroIcon or "rbxassetid://8834748103"
+    OrionLib.Folder = L_124_arg1.ConfigFolder
+    OrionLib.SaveCfg = L_124_arg1.SaveConfig
+    if L_124_arg1.SaveConfig and getfenv().isfolder and getfenv().makefolder and not getfenv().isfolder(L_124_arg1.ConfigFolder) then
+        getfenv().makefolder(L_124_arg1.ConfigFolder)
+    end
+    local L_128_ = L_23_func(L_20_func(L_19_func(L_18_func("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
+        Size = UDim2.new(1, 0, 1, -50)
+    }), {
+        L_18_func("List"),
+        L_18_func("Padding", 8, 0, 0, 8)
+    }), "Divider")
+    L_14_func(L_128_.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+        L_128_.CanvasSize = UDim2.new(0, 0, 0, L_128_.UIListLayout.AbsoluteContentSize.Y + 16)
+    end)
+    local L_129_ = L_20_func(L_19_func(L_18_func("Button"), {
+        Size = UDim2.new(0.5, 0, 1, 0),
+        Position = UDim2.new(0.5, 0, 0, 0),
+        BackgroundTransparency = 1
+    }), {
+        L_23_func(L_19_func(L_18_func("Image", "rbxassetid://7072725342"), {
+            Position = UDim2.new(0, 9, 0, 6),
+            Size = UDim2.new(0, 18, 0, 18)
+        }), "Text")
+    })
+    local L_130_ = L_20_func(L_19_func(L_18_func("Button"), {
+        Size = UDim2.new(0.5, 0, 1, 0),
+        BackgroundTransparency = 1
+    }), {
+        L_23_func(L_19_func(L_18_func("Image", "rbxassetid://7072719338"), {
+            Position = UDim2.new(0, 9, 0, 6),
+            Size = UDim2.new(0, 18, 0, 18),
+            Name = "Ico"
+        }), "Text")
+    })
+    local L_131_ = L_19_func(L_18_func("TFrame"), {
+        Size = UDim2.new(1, 0, 0, 50)
+    })
+    local L_132_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+        Size = UDim2.new(0, 150, 1, -50),
+        Position = UDim2.new(0, 0, 0, 50)
+    }), {
+        L_23_func(L_19_func(L_18_func("Frame"), {
+            Size = UDim2.new(1, 0, 0, 10),
+            Position = UDim2.new(0, 0, 0, 0)
+        }), "Second"),
+        L_23_func(L_19_func(L_18_func("Frame"), {
+            Size = UDim2.new(0, 10, 1, 0),
+            Position = UDim2.new(1, -10, 0, 0)
+        }), "Second"),
+        L_23_func(L_19_func(L_18_func("Frame"), {
+            Size = UDim2.new(0, 1, 1, 0),
+            Position = UDim2.new(1, -1, 0, 0)
+        }), "Stroke"),
+        L_128_,
+        L_20_func(L_19_func(L_18_func("TFrame"), {
+            Size = UDim2.new(1, 0, 0, 50),
+            Position = UDim2.new(0, 0, 1, -50)
+        }), {
+            L_23_func(L_19_func(L_18_func("Frame"), {
+                Size = UDim2.new(1, 0, 0, 1)
+            }), "Stroke"),
+            L_23_func(L_20_func(L_19_func(L_18_func("Frame"), {
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0, 32, 0, 32),
+                Position = UDim2.new(0, 10, 0.5, 0)
+            }), {
+                L_19_func(L_18_func("Image", string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%s&width=420&height=420&format=png", LocalPlayer.UserId)), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                }),
+                L_23_func(L_19_func(L_18_func("Image", "rbxassetid://4031889928"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                }), "Second"),
+                L_18_func("Corner", 1)
+            }), "Divider"),
+            L_20_func(L_19_func(L_18_func("TFrame"), {
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0, 32, 0, 32),
+                Position = UDim2.new(0, 10, 0.5, 0)
+            }), {
+                L_23_func(L_18_func("Stroke"), "Stroke"),
+                L_18_func("Corner", 1)
+            }),
+            L_23_func(L_19_func(L_18_func("Label", LocalPlayer.DisplayName, L_124_arg1.TestMode and 13 or 14), {
+                Size = UDim2.new(1, -60, 0, 13),
+                Position = L_124_arg1.TestMode and UDim2.new(0, 50, 0, 12) or UDim2.new(0, 50, 0, 19),
+                Font = Enum.Font.GothamBold,
+                ClipsDescendants = true
+            }), "Text"),
+            L_23_func(L_19_func(L_18_func("Label", "Tester", 12), {
+                Size = UDim2.new(1, -60, 0, 12),
+                Position = UDim2.new(0, 50, 1, -25),
+                Visible = L_124_arg1.TestMode
+            }), "TextDark")
+        })
+    }), "Second")
+    local L_133_ = L_23_func(L_19_func(L_18_func("Label", L_124_arg1.Name, 14), {
+        Size = UDim2.new(1, -30, 2, 0),
+        Position = UDim2.new(0, 25, 0, -24),
+        Font = Enum.Font.GothamBlack,
+        TextSize = 20
+    }), "Text")
+    local L_134_ = L_23_func(L_19_func(L_18_func("Frame"), {
+        Size = UDim2.new(1, 0, 0, 1),
+        Position = UDim2.new(0, 0, 1, -1)
+    }), "Stroke")
+    local L_135_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+        Parent = MainGui,
+        Position = UDim2.new(0.5, -307, 0.5, -172),
+        Size = UDim2.new(0, 615, 0, 344),
+        ClipsDescendants = true
+    }), {
+        L_20_func(L_19_func(L_18_func("TFrame"), {
+            Size = UDim2.new(1, 0, 0, 50),
+            Name = "TopBar"
+        }), {
+            L_133_,
+            L_134_,
+            L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
+                Size = UDim2.new(0, 70, 0, 30),
+                Position = UDim2.new(1, -90, 0, 10)
+            }), {
+                L_23_func(L_18_func("Stroke"), "Stroke"),
+                L_23_func(L_19_func(L_18_func("Frame"), {
+                    Size = UDim2.new(0, 1, 1, 0),
+                    Position = UDim2.new(0.5, 0, 0, 0)
+                }), "Stroke"),
+                L_129_,
+                L_130_
+            }), "Second")
+        }),
+        L_131_,
+        L_132_
+    }), "Main")
+    if L_124_arg1.ShowIcon then
+        L_133_.Position = UDim2.new(0, 50, 0, -24)
+        local L_138_ = L_19_func(L_18_func("Image", L_124_arg1.Icon), {
+            Size = UDim2.new(0, 20, 0, 20),
+            Position = UDim2.new(0, 25, 0, 15)
+        })
+        L_138_.Parent = L_135_.TopBar
+    end
+    L_15_func(L_131_, L_135_)
+    L_14_func(L_129_.MouseButton1Up, function()
+        L_135_.Visible = false
+        L_127_ = true
+        OrionLib:MakeNotification({
+            Name = "Interface Hidden",
+            Content = "Tap RightShift to reopen the interface",
+            Time = 5
+        })
+        L_124_arg1.CloseCallback()
+    end)
+    L_14_func(UserInputService.InputBegan, function(L_139_arg1)
+        if L_139_arg1.KeyCode == Enum.KeyCode.RightShift and L_127_ then
+            L_135_.Visible = true
+        end
+    end)
+    local L_126_isAnimating = false  -- Prevent rapid clicks
+    L_14_func(L_130_.MouseButton1Up, function()
+        if L_126_isAnimating then return end  -- Prevent clicks during animation
+        L_126_isAnimating = true
         
-        for object, themeProperty in pairs(OrionLib.ThemeObjects) do
-            if object and object.Parent then
-                if themeProperty == "Main" then
-                    TweenObject(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                        BackgroundColor3 = theme.Main
+        if L_126_ then
+            -- Expand the window
+            L_132_.Visible = false  -- Hide immediately to prevent flash
+            L_134_.Visible = false
+            L_135_.ClipsDescendants = true
+            
+            TweenService:Create(L_135_, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 615, 0, 344)
+            }):Play()
+            L_130_.Ico.Image = "rbxassetid://7072719338"
+            
+            task.wait(0.5)  -- Wait for tween to complete
+            L_135_.ClipsDescendants = false
+            L_132_.Visible = true
+            L_134_.Visible = true
+        else
+            -- Minimize the window
+            L_135_.ClipsDescendants = true
+            L_134_.Visible = false
+            L_132_.Visible = false
+            L_130_.Ico.Image = "rbxassetid://7072720870"
+            
+            TweenService:Create(L_135_, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, L_133_.TextBounds.X + 140, 0, 50)
+            }):Play()
+            
+            task.wait(0.5)  -- Wait for tween to complete
+        end
+        
+        L_126_ = not L_126_
+        L_126_isAnimating = false
+    end)
+    local function L_136_func()
+        L_135_.Visible = false
+        local L_140_ = L_19_func(L_18_func("Image", L_124_arg1.IntroIcon), {
+            Parent = MainGui,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.4, 0),
+            Size = UDim2.new(0, 28, 0, 28),
+            ImageColor3 = Color3.fromRGB(255, 255, 255),
+            ImageTransparency = 1
+        })
+        local L_141_ = L_19_func(L_18_func("Label", L_124_arg1.IntroText, 14), {
+            Parent = MainGui,
+            Size = UDim2.new(1, 0, 1, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 19, 0.5, 0),
+            TextXAlignment = Enum.TextXAlignment.Center,
+            Font = Enum.Font.GothamBold,
+            TextTransparency = 1
+        })
+        TweenService:Create(L_140_, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ImageTransparency = 0,
+            Position = UDim2.new(0.5, 0, 0.5, 0)
+        }):Play()
+        task.wait(0.8)
+        TweenService:Create(L_140_, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = UDim2.new(0.5, -(L_141_.TextBounds.X / 2), 0.5, 0)
+        }):Play()
+        task.wait(0.3)
+        TweenService:Create(L_141_, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TextTransparency = 0
+        }):Play()
+        task.wait(2)
+        TweenService:Create(L_141_, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TextTransparency = 1
+        }):Play()
+        L_135_.Visible = true
+        DebrisService:AddItem(L_140_, 0)
+        DebrisService:AddItem(L_141_, 0)
+    end
+    if L_124_arg1.IntroEnabled then
+        L_136_func()
+    end
+    local L_137_ = {}
+    function L_137_:MakeTab(L_142_arg1)
+        L_142_arg1 = L_142_arg1 or {}
+        L_142_arg1.Name = L_142_arg1.Name or "Tab"
+        L_142_arg1.Icon = L_142_arg1.Icon or ""
+        L_142_arg1.TestersOnly = L_142_arg1.TestersOnly or false
+        local L_143_ = L_20_func(L_19_func(L_18_func("Button"), {
+            Size = UDim2.new(1, 0, 0, 30),
+            Parent = L_128_,
+            Visible = L_124_arg1.TestMode and L_142_arg1.TestersOnly or not L_142_arg1.TestersOnly
+        }), {
+            L_23_func(L_19_func(L_18_func("Image", L_142_arg1.Icon), {
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0, 18, 0, 18),
+                Position = UDim2.new(0, 10, 0.5, 0),
+                ImageTransparency = 0.4,
+                Name = "Ico"
+            }), "Text"),
+            L_23_func(L_19_func(L_18_func("Label", L_142_arg1.Name, 14), {
+                Size = UDim2.new(1, -35, 1, 0),
+                Position = UDim2.new(0, 35, 0, 0),
+                Font = Enum.Font.GothamMedium,
+                TextTransparency = 0.4,
+                Name = "Title"
+            }), "Text")
+        })
+        if IconDatabase[L_142_arg1.Icon] then
+            L_143_.Ico.Image = IconDatabase[L_142_arg1.Icon]
+        end
+        local L_144_ = L_23_func(L_20_func(L_19_func(L_18_func("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
+            Size = UDim2.new(1, -150, 1, -50),
+            Position = UDim2.new(0, 150, 0, 50),
+            Parent = L_135_,
+            Visible = false,
+            Name = "ItemContainer"
+        }), {
+            L_18_func("List", 0, 6),
+            L_18_func("Padding", 15, 10, 10, 15)
+        }), "Divider")
+        L_14_func(L_144_.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+            L_144_.CanvasSize = UDim2.new(0, 0, 0, L_144_.UIListLayout.AbsoluteContentSize.Y + 30)
+        end)
+        if not L_125_ then
+            L_125_ = L_143_.Visible
+            if L_125_ then
+                L_143_.Ico.ImageTransparency = 0
+                L_143_.Title.TextTransparency = 0
+                L_143_.Title.Font = Enum.Font.GothamBlack
+                L_144_.Visible = true
+            end
+        end
+        L_14_func(L_143_.MouseButton1Down, function()
+            for _, L_149_forvar2 in next, L_128_:GetChildren() do
+                if L_149_forvar2:IsA("TextButton") then
+                    L_149_forvar2.Title.Font = Enum.Font.GothamMedium
+                    TweenService:Create(L_149_forvar2.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        ImageTransparency = 0.4
                     }):Play()
-                elseif themeProperty == "Second" then
-                    TweenObject(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                        BackgroundColor3 = theme.Second
-                    }):Play()
-                elseif themeProperty == "Stroke" then
-                    TweenObject(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                        Color = theme.Stroke
-                    }):Play()
-                elseif themeProperty == "Text" then
-                    TweenObject(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                        TextColor3 = theme.Text
-                    }):Play()
-                elseif themeProperty == "TextDark" then
-                    TweenObject(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                        TextColor3 = theme.TextDark
-                    }):Play()
-                elseif themeProperty == "Divider" then
-                    TweenObject(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-                        BackgroundColor3 = theme.Divider
+                    TweenService:Create(L_149_forvar2.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        TextTransparency = 0.4
                     }):Play()
                 end
             end
+            for _, L_151_forvar2 in next, L_135_:GetChildren() do
+                if L_151_forvar2.Name == "ItemContainer" then
+                    L_151_forvar2.Visible = false
+                end
+            end
+            TweenService:Create(L_143_.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                ImageTransparency = 0
+            }):Play()
+            TweenService:Create(L_143_.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                TextTransparency = 0
+            }):Play()
+            L_143_.Title.Font = Enum.Font.GothamBlack
+            L_144_.Visible = true
+        end)
+        local function L_145_func(L_152_arg1)
+            local L_153_ = {}
+            function L_153_:AddLabel(L_155_arg1)
+                local L_156_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 30),
+                    BackgroundTransparency = 0.7,
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_155_arg1, 15), {
+                        Size = UDim2.new(1, -12, 1, 0),
+                        Position = UDim2.new(0, 12, 0, 0),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Content"
+                    }), "Text"),
+                    L_23_func(L_18_func("Stroke"), "Stroke")
+                }), "Second")
+                local L_157_ = {}
+                function L_157_:Set(L_158_arg1)
+                    L_156_.Content.Text = L_158_arg1
+                end
+                return L_157_
+            end
+            function L_153_:AddParagraph(L_159_arg1, L_160_arg2)
+                L_159_arg1 = L_159_arg1 or "Text"
+                L_160_arg2 = L_160_arg2 or "Content"
+                local L_161_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 30),
+                    BackgroundTransparency = 0.7,
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_159_arg1, 15), {
+                        Size = UDim2.new(1, -12, 0, 14),
+                        Position = UDim2.new(0, 12, 0, 10),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Title"
+                    }), "Text"),
+                    L_23_func(L_19_func(L_18_func("Label", "", 13), {
+                        Size = UDim2.new(1, -24, 0, 0),
+                        Position = UDim2.new(0, 12, 0, 26),
+                        Font = Enum.Font.GothamMedium,
+                        Name = "Content",
+                        TextWrapped = true
+                    }), "TextDark"),
+                    L_23_func(L_18_func("Stroke"), "Stroke")
+                }), "Second")
+                L_14_func(L_161_.Content:GetPropertyChangedSignal("Text"), function()
+                    L_161_.Content.Size = UDim2.new(1, -24, 0, L_161_.Content.TextBounds.Y)
+                    L_161_.Size = UDim2.new(1, 0, 0, L_161_.Content.TextBounds.Y + 35)
+                end)
+                L_161_.Content.Text = L_160_arg2
+                local L_162_ = {}
+                function L_162_:Set(L_163_arg1)
+                    L_161_.Content.Text = L_163_arg1
+                end
+                return L_162_
+            end
+            function L_153_:AddButton(L_164_arg1)
+                L_164_arg1 = L_164_arg1 or {}
+                L_164_arg1.Name = L_164_arg1.Name or "Button"
+                L_164_arg1.Callback = L_164_arg1.Callback or function() end
+                L_164_arg1.Icon = L_164_arg1.Icon or "rbxassetid://3944703587"
+                local L_165_ = {}
+                local L_166_ = L_19_func(L_18_func("Button"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                })
+                local L_167_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 33),
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_164_arg1.Name, 15), {
+                        Size = UDim2.new(1, -12, 1, 0),
+                        Position = UDim2.new(0, 12, 0, 0),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Content"
+                    }), "Text"),
+                    L_23_func(L_19_func(L_18_func("Image", L_164_arg1.Icon), {
+                        Size = UDim2.new(0, 20, 0, 20),
+                        Position = UDim2.new(1, -30, 0, 7)
+                    }), "TextDark"),
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_166_
+                }), "Second")
+                L_14_func(L_166_.MouseEnter, function()
+                    TweenService:Create(L_167_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                end)
+                L_14_func(L_166_.MouseLeave, function()
+                    TweenService:Create(L_167_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second
+                    }):Play()
+                end)
+                L_14_func(L_166_.MouseButton1Up, function()
+                    TweenService:Create(L_167_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                    task.spawn(L_164_arg1.Callback)
+                end)
+                L_14_func(L_166_.MouseButton1Down, function()
+                    TweenService:Create(L_167_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)
+                    }):Play()
+                end)
+                function L_165_:Set(L_168_arg1)
+                    L_167_.Content.Text = L_168_arg1
+                end
+                return L_165_
+            end
+            function L_153_:AddToggle(L_169_arg1)
+                L_169_arg1 = L_169_arg1 or {}
+                L_169_arg1.Name = L_169_arg1.Name or "Toggle"
+                L_169_arg1.Default = L_169_arg1.Default or false
+                L_169_arg1.Callback = L_169_arg1.Callback or function() end
+                L_169_arg1.Color = L_169_arg1.Color or Color3.fromRGB(9, 99, 195)
+                L_169_arg1.Flag = L_169_arg1.Flag or nil
+                L_169_arg1.Save = L_169_arg1.Save or false
+                local L_170_ = {
+                    Value = L_169_arg1.Default,
+                    Save = L_169_arg1.Save
+                }
+                local L_171_ = L_19_func(L_18_func("Button"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                })
+                local L_172_ = L_20_func(L_19_func(L_18_func("RoundFrame", L_169_arg1.Color, 0, 4), {
+                    Size = UDim2.new(0, 24, 0, 24),
+                    Position = UDim2.new(1, -24, 0.5, 0),
+                    AnchorPoint = Vector2.new(0.5, 0.5)
+                }), {
+                    L_19_func(L_18_func("Stroke"), {
+                        Color = L_169_arg1.Color,
+                        Name = "Stroke",
+                        Transparency = 0.5
+                    }),
+                    L_19_func(L_18_func("Image", "rbxassetid://3944680095"), {
+                        Size = UDim2.new(0, 20, 0, 20),
+                        AnchorPoint = Vector2.new(0.5, 0.5),
+                        Position = UDim2.new(0.5, 0, 0.5, 0),
+                        ImageColor3 = Color3.fromRGB(255, 255, 255),
+                        Name = "Ico"
+                    })
+                })
+                local L_173_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 38),
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_169_arg1.Name, 15), {
+                        Size = UDim2.new(1, -12, 1, 0),
+                        Position = UDim2.new(0, 12, 0, 0),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Content"
+                    }), "Text"),
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_172_,
+                    L_171_
+                }), "Second")
+                function L_170_:Set(L_174_arg1)
+                    L_170_.Value = L_174_arg1
+                    TweenService:Create(L_172_, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = L_170_.Value and L_169_arg1.Color or OrionLib.Themes.Default.Divider
+                    }):Play()
+                    TweenService:Create(L_172_.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        Color = L_170_.Value and L_169_arg1.Color or OrionLib.Themes.Default.Stroke
+                    }):Play()
+                    TweenService:Create(L_172_.Ico, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        ImageTransparency = L_170_.Value and 0 or 1,
+                        Size = L_170_.Value and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 8, 0, 8)
+                    }):Play()
+                    L_169_arg1.Callback(L_170_.Value)
+                end
+                L_170_:Set(L_170_.Value)
+                L_14_func(L_171_.MouseEnter, function()
+                    TweenService:Create(L_173_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                end)
+                L_14_func(L_171_.MouseLeave, function()
+                    TweenService:Create(L_173_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second
+                    }):Play()
+                end)
+                L_14_func(L_171_.MouseButton1Up, function()
+                    TweenService:Create(L_173_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                    L_27_func(game.PlaceId)
+                    L_170_:Set(not L_170_.Value)
+                end)
+                L_14_func(L_171_.MouseButton1Down, function()
+                    TweenService:Create(L_173_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)
+                    }):Play()
+                end)
+                if L_169_arg1.Flag then
+                    OrionLib.Flags[L_169_arg1.Flag] = L_170_
+                end
+                return L_170_
+            end
+            function L_153_:AddSlider(L_175_arg1)
+                L_175_arg1 = L_175_arg1 or {}
+                L_175_arg1.Name = L_175_arg1.Name or "Slider"
+                L_175_arg1.Min = L_175_arg1.Min or 0
+                L_175_arg1.Max = L_175_arg1.Max or 100
+                L_175_arg1.Increment = L_175_arg1.Increment or 1
+                L_175_arg1.Default = L_175_arg1.Default or 50
+                L_175_arg1.Callback = L_175_arg1.Callback or function() end
+                L_175_arg1.ValueName = L_175_arg1.ValueName or ""
+                L_175_arg1.Color = L_175_arg1.Color or Color3.fromRGB(9, 149, 98)
+                L_175_arg1.Flag = L_175_arg1.Flag or nil
+                L_175_arg1.Save = L_175_arg1.Save or false
+                local L_176_ = {
+                    Value = L_175_arg1.Default,
+                    Save = L_175_arg1.Save
+                }
+                local L_177_ = false
+                local L_178_ = L_20_func(L_19_func(L_18_func("RoundFrame", L_175_arg1.Color, 0, 5), {
+                    Size = UDim2.new(0, 0, 1, 0),
+                    BackgroundTransparency = 0.3,
+                    ClipsDescendants = true
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", "value", 13), {
+                        Size = UDim2.new(1, -12, 0, 14),
+                        Position = UDim2.new(0, 12, 0, 6),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Value",
+                        TextTransparency = 0
+                    }), "Text")
+                })
+                local L_179_ = L_20_func(L_19_func(L_18_func("RoundFrame", L_175_arg1.Color, 0, 5), {
+                    Size = UDim2.new(1, -24, 0, 26),
+                    Position = UDim2.new(0, 12, 0, 30),
+                    BackgroundTransparency = 0.9
+                }), {
+                    L_19_func(L_18_func("Stroke"), {
+                        Color = L_175_arg1.Color
+                    }),
+                    L_23_func(L_19_func(L_18_func("Label", "value", 13), {
+                        Size = UDim2.new(1, -12, 0, 14),
+                        Position = UDim2.new(0, 12, 0, 6),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Value",
+                        TextTransparency = 0.8
+                    }), "Text"),
+                    L_178_
+                })
+                L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
+                    Size = UDim2.new(1, 0, 0, 65),
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_175_arg1.Name, 15), {
+                        Size = UDim2.new(1, -12, 0, 14),
+                        Position = UDim2.new(0, 12, 0, 10),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Content"
+                    }), "Text"),
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_179_
+                }), "Second")
+                L_179_.InputBegan:Connect(function(L_180_arg1)
+                    if L_180_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_180_arg1.UserInputType == Enum.UserInputType.Touch then
+                        L_177_ = true
+                    end
+                end)
+                L_179_.InputEnded:Connect(function(L_181_arg1)
+                    if L_181_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_181_arg1.UserInputType == Enum.UserInputType.Touch then
+                        L_177_ = false
+                    end
+                end)
+                function L_176_:Set(L_182_arg1)
+                    L_182_arg1 = math.clamp(L_21_func(L_182_arg1, L_175_arg1.Increment), L_175_arg1.Min, L_175_arg1.Max)
+                    TweenService:Create(L_178_, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        Size = UDim2.fromScale((L_182_arg1 - L_175_arg1.Min) / (L_175_arg1.Max - L_175_arg1.Min), 1)
+                    }):Play()
+                    L_179_.Value.Text = string.format("%s %s", L_182_arg1, L_175_arg1.ValueName)
+                    L_178_.Value.Text = string.format("%s %s", L_182_arg1, L_175_arg1.ValueName)
+                    L_175_arg1.Callback(L_182_arg1)
+                end
+                UserInputService.InputChanged:Connect(function(L_183_arg1)
+                    if L_177_ and (L_183_arg1.UserInputType == Enum.UserInputType.MouseMovement or L_183_arg1.UserInputType == Enum.UserInputType.Touch) then
+                        local L_184_ = math.clamp((L_183_arg1.Position.X - L_179_.AbsolutePosition.X) / L_179_.AbsoluteSize.X, 0, 1)
+                        L_176_:Set(L_175_arg1.Min + (L_175_arg1.Max - L_175_arg1.Min) * L_184_)
+                        L_27_func(game.PlaceId)
+                    end
+                end)
+                L_176_:Set(L_176_.Value)
+                if L_175_arg1.Flag then
+                    OrionLib.Flags[L_175_arg1.Flag] = L_176_
+                end
+                return L_176_
+            end
+            function L_153_:AddDropdown(L_185_arg1)
+                L_185_arg1 = L_185_arg1 or {}
+                L_185_arg1.Name = L_185_arg1.Name or "Dropdown"
+                L_185_arg1.Options = L_185_arg1.Options or {}
+                L_185_arg1.Default = L_185_arg1.Default or ""
+                L_185_arg1.Callback = L_185_arg1.Callback or function() end
+                L_185_arg1.Flag = L_185_arg1.Flag or nil
+                L_185_arg1.Save = L_185_arg1.Save or false
+                local L_186_ = {
+                    Value = L_185_arg1.Default,
+                    Options = L_185_arg1.Options,
+                    Buttons = {},
+                    Toggled = false,
+                    Type = "Dropdown",
+                    Save = L_185_arg1.Save
+                }
+                local L_187_ = 5
+                if not table.find(L_186_.Options, L_186_.Value) then
+                    L_186_.Value = "..."
+                end
+                local L_188_ = L_18_func("List")
+                local L_189_ = L_23_func(L_19_func(L_20_func(L_18_func("ScrollFrame", Color3.fromRGB(40, 40, 40), 4), {
+                    L_188_
+                }), {
+                    Parent = L_152_arg1,
+                    Position = UDim2.new(0, 0, 0, 38),
+                    Size = UDim2.new(1, 0, 1, -38),
+                    ClipsDescendants = true
+                }), "Divider")
+                local L_190_ = L_19_func(L_18_func("Button"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                })
+                local L_191_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 38),
+                    Parent = L_152_arg1,
+                    ClipsDescendants = true
+                }), {
+                    L_189_,
+                    L_19_func(L_20_func(L_18_func("TFrame"), {
+                        L_23_func(L_19_func(L_18_func("Label", L_185_arg1.Name, 15), {
+                            Size = UDim2.new(1, -12, 1, 0),
+                            Position = UDim2.new(0, 12, 0, 0),
+                            Font = Enum.Font.GothamBold,
+                            Name = "Content"
+                        }), "Text"),
+                        L_23_func(L_19_func(L_18_func("Image", "rbxassetid://7072706796"), {
+                            Size = UDim2.new(0, 20, 0, 20),
+                            AnchorPoint = Vector2.new(0, 0.5),
+                            Position = UDim2.new(1, -30, 0.5, 0),
+                            ImageColor3 = Color3.fromRGB(240, 240, 240),
+                            Name = "Ico"
+                        }), "TextDark"),
+                        L_23_func(L_19_func(L_18_func("Label", "Selected", 13), {
+                            Size = UDim2.new(1, -40, 1, 0),
+                            Font = Enum.Font.Gotham,
+                            Name = "Selected",
+                            TextXAlignment = Enum.TextXAlignment.Right
+                        }), "TextDark"),
+                        L_23_func(L_19_func(L_18_func("Frame"), {
+                            Size = UDim2.new(1, 0, 0, 1),
+                            Position = UDim2.new(0, 0, 1, -1),
+                            Name = "Line",
+                            Visible = false
+                        }), "Stroke"),
+                        L_190_
+                    }), {
+                        Size = UDim2.new(1, 0, 0, 38),
+                        ClipsDescendants = true,
+                        Name = "F"
+                    }),
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_18_func("Corner")
+                }), "Second")
+                L_14_func(L_188_:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+                    L_189_.CanvasSize = UDim2.new(0, 0, 0, L_188_.AbsoluteContentSize.Y)
+                end)
+                local function L_192_func(L_193_arg1)
+                    for _, L_195_forvar2 in next, L_193_arg1 do
+                        local L_196_ = L_23_func(L_19_func(L_20_func(L_18_func("Button", Color3.fromRGB(40, 40, 40)), {
+                            L_18_func("Corner", 0, 6),
+                            L_23_func(L_19_func(L_18_func("Label", L_195_forvar2, 13, 0.4), {
+                                Position = UDim2.new(0, 8, 0, 0),
+                                Size = UDim2.new(1, -8, 1, 0),
+                                Name = "Title"
+                            }), "Text")
+                        }), {
+                            Parent = L_189_,
+                            Size = UDim2.new(1, 0, 0, 28),
+                            BackgroundTransparency = 1,
+                            ClipsDescendants = true
+                        }), "Divider")
+                        L_14_func(L_196_.MouseButton1Down, function()
+                            L_186_:Set(L_195_forvar2)
+                            L_27_func(game.PlaceId)
+                        end)
+                        L_186_.Buttons[L_195_forvar2] = L_196_
+                    end
+                end
+                function L_186_:Refresh(L_197_arg1, L_198_arg2)
+                    if L_198_arg2 then
+                        for _, L_200_forvar2 in next, L_186_.Buttons do
+                            DebrisService:AddItem(L_200_forvar2, 0)
+                        end
+                        table.clear(L_186_.Options)
+                        table.clear(L_186_.Buttons)
+                    end
+                    L_186_.Options = L_197_arg1
+                    L_192_func(L_186_.Options)
+                end
+                function L_186_:Set(L_201_arg1)
+                    if not table.find(L_186_.Options, L_201_arg1) then
+                        L_186_.Value = "..."
+                        L_191_.F.Selected.Text = L_186_.Value
+                        for _, L_203_forvar2 in next, L_186_.Buttons do
+                            TweenService:Create(L_203_forvar2, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                                BackgroundTransparency = 1
+                            }):Play()
+                            TweenService:Create(L_203_forvar2.Title, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                                TextTransparency = 0.4
+                            }):Play()
+                        end
+                        return
+                    end
+                    L_186_.Value = L_201_arg1
+                    L_191_.F.Selected.Text = L_186_.Value
+                    for _, L_205_forvar2 in next, L_186_.Buttons do
+                        TweenService:Create(L_205_forvar2, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                            BackgroundTransparency = 1
+                        }):Play()
+                        TweenService:Create(L_205_forvar2.Title, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                            TextTransparency = 0.4
+                        }):Play()
+                    end
+                    TweenService:Create(L_186_.Buttons[L_201_arg1], TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        BackgroundTransparency = 0
+                    }):Play()
+                    TweenService:Create(L_186_.Buttons[L_201_arg1].Title, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        TextTransparency = 0
+                    }):Play()
+                    return L_185_arg1.Callback(L_186_.Value)
+                end
+                L_14_func(L_190_.MouseButton1Down, function()
+                    L_186_.Toggled = not L_186_.Toggled
+                    L_191_.F.Line.Visible = L_186_.Toggled
+                    TweenService:Create(L_191_.F.Ico, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        Rotation = L_186_.Toggled and 180 or 0
+                    }):Play()
+                    if #L_186_.Options > L_187_ then
+                        TweenService:Create(L_191_, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                            Size = L_186_.Toggled and UDim2.new(1, 0, 0, 38 + L_187_ * 28) or UDim2.new(1, 0, 0, 38)
+                        }):Play()
+                    else
+                        TweenService:Create(L_191_, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                            Size = L_186_.Toggled and UDim2.new(1, 0, 0, L_188_.AbsoluteContentSize.Y + 38) or UDim2.new(1, 0, 0, 38)
+                        }):Play()
+                    end
+                end)
+                L_186_:Refresh(L_186_.Options, false)
+                L_186_:Set(L_186_.Value)
+                if L_185_arg1.Flag then
+                    OrionLib.Flags[L_185_arg1.Flag] = L_186_
+                end
+                return L_186_
+            end
+            local L_154_ = nil
+            function L_153_:AddBind(L_206_arg1)
+                L_206_arg1.Name = L_206_arg1.Name or "Bind"
+                L_206_arg1.Default = L_206_arg1.Default or Enum.KeyCode.Unknown
+                L_206_arg1.Hold = L_206_arg1.Hold or false
+                L_206_arg1.Callback = L_206_arg1.Callback or function() end
+                L_206_arg1.Flag = L_206_arg1.Flag or nil
+                L_206_arg1.Save = L_206_arg1.Save or false
+                local L_207_ = {
+                    L_154_,
+                    Binding = false,
+                    Type = "Bind",
+                    Save = L_206_arg1.Save
+                }
+                local L_208_ = false
+                local L_209_ = L_19_func(L_18_func("Button"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                })
+                local L_210_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
+                    Size = UDim2.new(0, 24, 0, 24),
+                    Position = UDim2.new(1, -12, 0.5, 0),
+                    AnchorPoint = Vector2.new(1, 0.5)
+                }), {
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_23_func(L_19_func(L_18_func("Label", L_206_arg1.Name, 14), {
+                        Size = UDim2.new(1, 0, 1, 0),
+                        Font = Enum.Font.GothamBold,
+                        TextXAlignment = Enum.TextXAlignment.Center,
+                        Name = "Value"
+                    }), "Text")
+                }), "Main")
+                local L_211_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 38),
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_206_arg1.Name, 15), {
+                        Size = UDim2.new(1, -12, 1, 0),
+                        Position = UDim2.new(0, 12, 0, 0),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Content"
+                    }), "Text"),
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_210_,
+                    L_209_
+                }), "Second")
+                L_14_func(L_210_.Value:GetPropertyChangedSignal("Text"), function()
+                    TweenService:Create(L_210_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        Size = UDim2.new(0, L_210_.Value.TextBounds.X + 16, 0, 24)
+                    }):Play()
+                end)
+                L_14_func(L_209_.InputEnded, function(L_212_arg1)
+                    if (L_212_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_212_arg1.UserInputType == Enum.UserInputType.Touch) and not L_207_.Binding then
+                        L_207_.Binding = true
+                        L_210_.Value.Text = ""
+                    end
+                end)
+                function L_207_:Set(L_213_arg1)
+                    L_207_.Binding = false
+                    L_207_.Value = L_213_arg1 or L_207_.Value
+                    L_207_.Value = L_207_.Value.Name or L_207_.Value
+                    L_210_.Value.Text = L_207_.Value
+                end
+                L_14_func(UserInputService.InputBegan, function(L_214_arg1)
+                    if UserInputService:GetFocusedTextBox() then
+                        return
+                    end
+                    if (L_214_arg1.KeyCode.Name == L_207_.Value or L_214_arg1.UserInputType.Name == L_207_.Value) and not L_207_.Binding then
+                        if L_206_arg1.Hold then
+                            L_208_ = true
+                            L_206_arg1.Callback(L_208_)
+                        else
+                            L_206_arg1.Callback()
+                        end
+                    elseif L_207_.Binding then
+                        local L_215_
+                        pcall(function()
+                            if not L_30_func(L_29_, L_214_arg1.KeyCode) then
+                                L_215_ = L_214_arg1.KeyCode
+                            end
+                        end)
+                        pcall(function()
+                            if L_30_func(L_28_, L_214_arg1.UserInputType) and not L_215_ then
+                                L_215_ = L_214_arg1.UserInputType
+                            end
+                        end)
+                        L_215_ = L_215_ or L_207_.Value
+                        L_207_:Set(L_215_)
+                        L_27_func(game.PlaceId)
+                    end
+                end)
+                L_14_func(UserInputService.InputEnded, function(L_216_arg1)
+                    if (L_216_arg1.KeyCode.Name == L_207_.Value or L_216_arg1.UserInputType.Name == L_207_.Value) and L_206_arg1.Hold and L_208_ then
+                        L_208_ = false
+                        L_206_arg1.Callback(L_208_)
+                    end
+                end)
+                L_14_func(L_209_.MouseEnter, function()
+                    TweenService:Create(L_211_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                end)
+                L_14_func(L_209_.MouseLeave, function()
+                    TweenService:Create(L_211_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second
+                    }):Play()
+                end)
+                L_14_func(L_209_.MouseButton1Up, function()
+                    TweenService:Create(L_211_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                end)
+                L_14_func(L_209_.MouseButton1Down, function()
+                    TweenService:Create(L_211_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)
+                    }):Play()
+                end)
+                L_207_:Set(L_206_arg1.Default)
+                if L_206_arg1.Flag then
+                    OrionLib.Flags[L_206_arg1.Flag] = L_207_
+                end
+                return L_207_
+            end
+            function L_153_:AddTextbox(L_217_arg1)
+                L_217_arg1 = L_217_arg1 or {}
+                L_217_arg1.Name = L_217_arg1.Name or "Textbox"
+                L_217_arg1.Default = L_217_arg1.Default or ""
+                L_217_arg1.TextDisappear = L_217_arg1.TextDisappear or false
+                L_217_arg1.Callback = L_217_arg1.Callback or function() end
+                local L_218_ = L_19_func(L_18_func("Button"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                })
+                local L_219_ = L_23_func(L_16_func("TextBox", {
+                    Size = UDim2.new(1, 0, 1, 0),
+                    BackgroundTransparency = 1,
+                    TextColor3 = Color3.fromRGB(255, 255, 255),
+                    PlaceholderColor3 = Color3.fromRGB(210, 210, 210),
+                    PlaceholderText = "Input",
+                    Font = Enum.Font.GothamMedium,
+                    TextXAlignment = Enum.TextXAlignment.Center,
+                    TextSize = 14,
+                    ClearTextOnFocus = false
+                }), "Text")
+                local L_220_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
+                    Size = UDim2.new(0, 24, 0, 24),
+                    Position = UDim2.new(1, -12, 0.5, 0),
+                    AnchorPoint = Vector2.new(1, 0.5)
+                }), {
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_219_
+                }), "Main")
+                local L_221_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 38),
+                    Parent = L_152_arg1
+                }), {
+                    L_23_func(L_19_func(L_18_func("Label", L_217_arg1.Name, 15), {
+                        Size = UDim2.new(1, -12, 1, 0),
+                        Position = UDim2.new(0, 12, 0, 0),
+                        Font = Enum.Font.GothamBold,
+                        Name = "Content"
+                    }), "Text"),
+                    L_23_func(L_18_func("Stroke"), "Stroke"),
+                    L_220_,
+                    L_218_
+                }), "Second")
+                L_14_func(L_219_:GetPropertyChangedSignal("Text"), function()
+                    TweenService:Create(L_220_, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        Size = UDim2.new(0, L_219_.TextBounds.X + 16, 0, 24)
+                    }):Play()
+                end)
+                L_14_func(L_219_.FocusLost, function()
+                    L_217_arg1.Callback(L_219_.Text)
+                    if L_217_arg1.TextDisappear then
+                        L_219_.Text = ""
+                    end
+                end)
+                L_219_.Text = L_217_arg1.Default
+                L_14_func(L_218_.MouseEnter, function()
+                    TweenService:Create(L_221_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                end)
+                L_14_func(L_218_.MouseLeave, function()
+                    TweenService:Create(L_221_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second
+                    }):Play()
+                end)
+                L_14_func(L_218_.MouseButton1Up, function()
+                    TweenService:Create(L_221_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)
+                    }):Play()
+                    L_219_:CaptureFocus()
+                end)
+                L_14_func(L_218_.MouseButton1Down, function()
+                    TweenService:Create(L_221_, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)
+                    }):Play()
+                end)
+            end
+            function L_153_:AddColorpicker(L_222_arg1)
+                L_222_arg1 = L_222_arg1 or {}
+                L_222_arg1.Name = L_222_arg1.Name or "Colorpicker"
+                L_222_arg1.Default = L_222_arg1.Default or Color3.fromRGB(255, 255, 255)
+                L_222_arg1.Callback = L_222_arg1.Callback or function() end
+                L_222_arg1.Flag = L_222_arg1.Flag or nil
+                L_222_arg1.Save = L_222_arg1.Save or false
+                local L_223_, L_224_, L_225_ = 1, 1, 1
+                local L_226_ = {
+                    Value = L_222_arg1.Default,
+                    Toggled = false,
+                    Type = "Colorpicker",
+                    Save = L_222_arg1.Save
+                }
+                local L_227_ = L_16_func("ImageLabel", {
+                    Size = UDim2.new(0, 18, 0, 18),
+                    Position = UDim2.new(select(3, L_226_.Value:ToHSV())),
+                    ScaleType = Enum.ScaleType.Fit,
+                    AnchorPoint = Vector2.new(0.5, 0.5),
+                    BackgroundTransparency = 1,
+                    Image = "rbxassetid://4805639000"
+                })
+                local L_228_ = L_16_func("ImageLabel", {
+                    Size = UDim2.new(0, 18, 0, 18),
+                    Position = UDim2.new(0.5, 0, 1 - select(1, L_226_.Value:ToHSV())),
+                    ScaleType = Enum.ScaleType.Fit,
+                    AnchorPoint = Vector2.new(0.5, 0.5),
+                    BackgroundTransparency = 1,
+                    Image = "rbxassetid://4805639000"
+                })
+                local L_229_ = L_16_func("ImageLabel", {
+                    Size = UDim2.new(1, -25, 1, 0),
+                    Visible = false,
+                    Image = "rbxassetid://4155801252"
+                }, {
+                    L_16_func("UICorner", {
+                        CornerRadius = UDim.new(0, 5)
+                    }),
+                    L_227_
+                })
+                local L_230_ = L_16_func("Frame", {
+                    Size = UDim2.new(0, 20, 1, 0),
+                    Position = UDim2.new(1, -20, 0, 0),
+                    Visible = false
+                }, {
+                    L_16_func("UIGradient", {
+                        Rotation = 270,
+                        Color = ColorSequence.new{
+                            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 4)),
+                            ColorSequenceKeypoint.new(0.2, Color3.fromRGB(234, 255, 0)),
+                            ColorSequenceKeypoint.new(0.4, Color3.fromRGB(21, 255, 0)),
+                            ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 255, 255)),
+                            ColorSequenceKeypoint.new(0.8, Color3.fromRGB(0, 17, 255)),
+                            ColorSequenceKeypoint.new(0.9, Color3.fromRGB(255, 0, 251)),
+                            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 4))
+                        }
+                    }),
+                    L_16_func("UICorner", {
+                        CornerRadius = UDim.new(0, 5)
+                    }),
+                    L_228_
+                })
+                local L_231_ = L_16_func("Frame", {
+                    Position = UDim2.new(0, 0, 0, 32),
+                    Size = UDim2.new(1, 0, 1, -32),
+                    BackgroundTransparency = 1,
+                    ClipsDescendants = true
+                }, {
+                    L_230_,
+                    L_229_,
+                    L_16_func("UIPadding", {
+                        PaddingLeft = UDim.new(0, 35),
+                        PaddingRight = UDim.new(0, 35),
+                        PaddingBottom = UDim.new(0, 10),
+                        PaddingTop = UDim.new(0, 17)
+                    })
+                })
+                local L_232_ = L_19_func(L_18_func("Button"), {
+                    Size = UDim2.new(1, 0, 1, 0)
+                })
+                local L_233_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
+                    Size = UDim2.new(0, 24, 0, 24),
+                    Position = UDim2.new(1, -12, 0.5, 0),
+                    AnchorPoint = Vector2.new(1, 0.5)
+                }), {
+                    L_23_func(L_18_func("Stroke"), "Stroke")
+                }), "Main")
+                local L_234_ = L_23_func(L_20_func(L_19_func(L_18_func("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+                    Size = UDim2.new(1, 0, 0, 38),
+                    Parent = L_152_arg1
+                }), {
+                    L_19_func(L_20_func(L_18_func("TFrame"), {
+                        L_23_func(L_19_func(L_18_func("Label", L_222_arg1.Name, 15), {
+                            Size = UDim2.new(1, -12, 1, 0),
+                            Position = UDim2.new(0, 12, 0, 0),
+                            Font = Enum.Font.GothamBold,
+                            Name = "Content"
+                        }), "Text"),
+                        L_233_,
+                        L_232_,
+                        L_23_func(L_19_func(L_18_func("Frame"), {
+                            Size = UDim2.new(1, 0, 0, 1),
+                            Position = UDim2.new(0, 0, 1, -1),
+                            Name = "Line",
+                            Visible = false
+                        }), "Stroke")
+                    }), {
+                        Size = UDim2.new(1, 0, 0, 38),
+                        ClipsDescendants = true,
+                        Name = "F"
+                    }),
+                    L_231_,
+                    L_23_func(L_18_func("Stroke"), "Stroke")
+                }), "Second")
+                L_14_func(L_232_.MouseButton1Down, function()
+                    L_226_.Toggled = not L_226_.Toggled
+                    TweenService:Create(L_234_, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        Size = L_226_.Toggled and UDim2.new(1, 0, 0, 148) or UDim2.new(1, 0, 0, 38)
+                    }):Play()
+                    L_229_.Visible = L_226_.Toggled
+                    L_230_.Visible = L_226_.Toggled
+                    L_234_.F.Line.Visible = L_226_.Toggled
+                end)
+                function L_226_:Set(L_238_arg1)
+                    L_226_.Value = L_238_arg1
+                    L_233_.BackgroundColor3 = L_226_.Value
+                    L_222_arg1.Callback(L_226_.Value)
+                end
+                local function L_235_func()
+                    L_233_.BackgroundColor3 = Color3.fromHSV(L_223_, L_224_, L_225_)
+                    L_229_.BackgroundColor3 = Color3.fromHSV(L_223_, 1, 1)
+                    L_226_:Set(L_233_.BackgroundColor3)
+                    L_222_arg1.Callback(L_233_.BackgroundColor3)
+                    L_27_func(game.PlaceId)
+                end
+                L_223_ = 1 - math.clamp(L_228_.AbsolutePosition.Y - L_230_.AbsolutePosition.Y, 0, L_230_.AbsoluteSize.Y) / L_230_.AbsoluteSize.Y
+                L_224_ = math.clamp(L_227_.AbsolutePosition.X - L_229_.AbsolutePosition.X, 0, L_229_.AbsoluteSize.X) / L_229_.AbsoluteSize.X
+                L_225_ = 1 - math.clamp(L_227_.AbsolutePosition.Y - L_229_.AbsolutePosition.Y, 0, L_229_.AbsoluteSize.Y) / L_229_.AbsoluteSize.Y
+                local L_236_
+                L_14_func(L_229_.InputBegan, function(L_239_arg1)
+                    if L_239_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_239_arg1.UserInputType == Enum.UserInputType.Touch then
+                        if L_236_ then
+                            L_236_:Disconnect()
+                        end
+                        L_236_ = L_14_func(RunService.RenderStepped, function()
+                            local L_240_ = math.clamp(Mouse.X - L_229_.AbsolutePosition.X, 0, L_229_.AbsoluteSize.X) / L_229_.AbsoluteSize.X
+                            local L_241_ = math.clamp(Mouse.Y - L_229_.AbsolutePosition.Y, 0, L_229_.AbsoluteSize.Y) / L_229_.AbsoluteSize.Y
+                            L_227_.Position = UDim2.new(L_240_, 0, L_241_, 0)
+                            L_224_ = L_240_
+                            L_225_ = 1 - L_241_
+                            L_235_func()
+                        end)
+                    end
+                end)
+                L_14_func(L_229_.InputEnded, function(L_242_arg1)
+                    if (L_242_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_242_arg1.UserInputType == Enum.UserInputType.Touch) and L_236_ then
+                        L_236_:Disconnect()
+                    end
+                end)
+                local L_237_
+                L_14_func(L_230_.InputBegan, function(L_243_arg1)
+                    if L_243_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_243_arg1.UserInputType == Enum.UserInputType.Touch then
+                        if L_237_ then
+                            L_237_:Disconnect()
+                        end
+                        L_237_ = L_14_func(RunService.RenderStepped, function()
+                            local L_244_ = math.clamp(Mouse.Y - L_230_.AbsolutePosition.Y, 0, L_230_.AbsoluteSize.Y) / L_230_.AbsoluteSize.Y
+                            L_228_.Position = UDim2.new(0.5, 0, L_244_, 0)
+                            L_223_ = 1 - L_244_
+                            L_235_func()
+                        end)
+                    end
+                end)
+                L_14_func(L_230_.InputEnded, function(L_245_arg1)
+                    if (L_245_arg1.UserInputType == Enum.UserInputType.MouseButton1 or L_245_arg1.UserInputType == Enum.UserInputType.Touch) and L_237_ then
+                        L_237_:Disconnect()
+                    end
+                end)
+                L_226_:Set(L_226_.Value)
+                if L_222_arg1.Flag then
+                    OrionLib.Flags[L_222_arg1.Flag] = L_226_
+                end
+                return L_226_
+            end
+            return L_153_
         end
+        local L_146_ = {}
+        function L_146_:AddSection(L_246_arg1)
+            L_246_arg1.Name = L_246_arg1.Name or "Section"
+            local L_247_ = L_20_func(L_19_func(L_18_func("TFrame"), {
+                Size = UDim2.new(1, 0, 0, 26),
+                Parent = L_144_
+            }), {
+                L_23_func(L_19_func(L_18_func("Label", L_246_arg1.Name, 14), {
+                    Size = UDim2.new(1, -12, 0, 16),
+                    Position = UDim2.new(0, 0, 0, 3),
+                    Font = Enum.Font.GothamMedium
+                }), "TextDark"),
+                L_20_func(L_19_func(L_18_func("TFrame"), {
+                    AnchorPoint = Vector2.new(0, 0),
+                    Size = UDim2.new(1, 0, 1, -24),
+                    Position = UDim2.new(0, 0, 0, 23),
+                    Name = "Holder"
+                }), {
+                    L_18_func("List", 0, 6)
+                })
+            })
+            L_14_func(L_247_.Holder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+                L_247_.Size = UDim2.new(1, 0, 0, L_247_.Holder.UIListLayout.AbsoluteContentSize.Y + 31)
+                L_247_.Holder.Size = UDim2.new(1, 0, 0, L_247_.Holder.UIListLayout.AbsoluteContentSize.Y)
+            end)
+            local L_248_ = {}
+            for L_249_forvar1, L_250_forvar2 in next, L_145_func(L_247_.Holder) do
+                L_248_[L_249_forvar1] = L_250_forvar2
+            end
+            return L_248_
+        end
+        for L_251_forvar1, L_252_forvar2 in next, L_145_func(L_144_) do
+            L_146_[L_251_forvar1] = L_252_forvar2
+        end
+        return L_146_
     end
+    return L_137_
 end
 
-function OrionLib:AddTheme(themeName, themeData)
-    OrionLib.Themes[themeName] = themeData
-end
 
---============================================================================
--- CLEANUP
---============================================================================
+
+--═══════════════════════════════════════════════════════════════════════════════
+-- CLEANUP AND DESTRUCTION
+--═══════════════════════════════════════════════════════════════════════════════
 
 function OrionLib:Destroy()
-    for _, connection in ipairs(OrionLib.Connections) do
-        pcall(function()
-            connection:Disconnect()
-        end)
-    end
-    
-    for gui, _ in pairs(OrionLib.Elements) do
-        pcall(function()
-            DebrisService:AddItem(gui, 0)
-        end)
-    end
-    
-    OrionLib.Elements = {}
-    OrionLib.ThemeObjects = {}
-    OrionLib.Connections = {}
-    OrionLib.Flags = {}
+    DebrisService:AddItem(MainGui, 0)
 end
 
---============================================================================
--- RETURN LIBRARY
---============================================================================
+
+
+--═══════════════════════════════════════════════════════════════════════════════
+-- RETURN LIBRARY TO CALLER
+--═══════════════════════════════════════════════════════════════════════════════
 
 return OrionLib
