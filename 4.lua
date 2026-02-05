@@ -3446,7 +3446,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         local KeybindToggleInline = Utility.AddDrawing("Square", {
@@ -3486,7 +3486,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         local KeybindAlwaysInline = Utility.AddDrawing("Square", {
@@ -3527,7 +3527,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         function Keybind:Drop(State)
@@ -4739,7 +4739,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         Utility.AddConnection(Library.Communication.Event, function(Type, Color)
