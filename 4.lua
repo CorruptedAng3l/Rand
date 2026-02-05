@@ -1571,48 +1571,52 @@ do
         local success, err = pcall(function()
             -- First check if file already exists locally
             if isfile and isfile(Image) then
-                ImageFile = readfile(Image)
-                if ImageFile and #ImageFile > 0 then
+                local cachedData = readfile(Image)
+                if cachedData and typeof(cachedData) == "string" and #cachedData > 100 then
+                    ImageFile = cachedData
                     return -- Successfully loaded from cache
                 end
             end
             
             -- Try to download the image
             local response = nil
+            local debugInfo = {}
             
-            -- Method 1: Volt API request with proper headers
+            -- Method 1: Volt API request (primary for Volt)
             if request then
                 local requestSuccess, requestResult = pcall(function()
                     return request({
-                        Url = Url,
-                        Method = "GET",
-                        Headers = {
-                            ["User-Agent"] = "Roblox/WinInet",
-                            ["Accept"] = "image/*,*/*"
-                        }
-                    })
-                end)
-                
-                if requestSuccess and requestResult and requestResult.Success and requestResult.Body then
-                    response = requestResult.Body
-                end
-            end
-            
-            -- Method 2: syn.request (Synapse)
-            if not response and syn and syn.request then
-                local synSuccess, synResult = pcall(function()
-                    return syn.request({
                         Url = Url,
                         Method = "GET"
                     })
                 end)
                 
-                if synSuccess and synResult and synResult.Success and synResult.Body then
-                    response = synResult.Body
+                debugInfo.request = {success = requestSuccess, hasResult = requestResult ~= nil}
+                if requestSuccess and requestResult then
+                    debugInfo.request.statusCode = requestResult.StatusCode
+                    debugInfo.request.bodyLen = requestResult.Body and #requestResult.Body or 0
+                    if requestResult.Success and requestResult.Body and #requestResult.Body > 100 then
+                        response = requestResult.Body
+                    end
                 end
             end
             
-            -- Method 3: http_request
+            -- Method 2: game:HttpGet (most reliable fallback)
+            if not response then
+                local httpGetSuccess, httpGetResult = pcall(function()
+                    return game:HttpGet(Url)
+                end)
+                
+                debugInfo.httpGet = {success = httpGetSuccess, hasResult = httpGetResult ~= nil}
+                if httpGetSuccess and httpGetResult then
+                    debugInfo.httpGet.bodyLen = #httpGetResult
+                    if #httpGetResult > 100 then
+                        response = httpGetResult
+                    end
+                end
+            end
+            
+            -- Method 3: http_request alias
             if not response and http_request then
                 local httpSuccess, httpResult = pcall(function()
                     return http_request({
@@ -1621,44 +1625,72 @@ do
                     })
                 end)
                 
-                if httpSuccess and httpResult and httpResult.Success and httpResult.Body then
+                debugInfo.http_request = {success = httpSuccess}
+                if httpSuccess and httpResult and httpResult.Success and httpResult.Body and #httpResult.Body > 100 then
                     response = httpResult.Body
                 end
             end
             
-            -- Method 4: game:HttpGet (fallback)
-            if not response then
-                local httpGetSuccess, httpGetResult = pcall(function()
-                    return game:HttpGet(Url)
+            -- Method 4: syn.request (Synapse)
+            if not response and syn and syn.request then
+                local synSuccess, synResult = pcall(function()
+                    return syn.request({
+                        Url = Url,
+                        Method = "GET"
+                    })
                 end)
                 
-                if httpGetSuccess and httpGetResult and #httpGetResult > 0 then
-                    response = httpGetResult
+                debugInfo.syn = {success = synSuccess}
+                if synSuccess and synResult and synResult.Success and synResult.Body and #synResult.Body > 100 then
+                    response = synResult.Body
+                end
+            end
+            
+            -- Debug output for troubleshooting
+            if not response then
+                warn("[AbyssLib AddImage]: All methods failed for - " .. Url)
+                for method, info in pairs(debugInfo) do
+                    local infoStr = ""
+                    for k, v in pairs(info) do
+                        infoStr = infoStr .. k .. "=" .. tostring(v) .. " "
+                    end
+                    warn("[AbyssLib AddImage]: " .. method .. ": " .. infoStr)
                 end
             end
             
             -- Save and set the image if we got data
-            if response and #response > 100 then -- Basic validation (image should be > 100 bytes)
+            if response and #response > 100 then
                 -- Ensure directory exists
                 local dir = string.match(Image, "(.+)/[^/]+$")
-                if dir and isfolder and makefolder and not isfolder(dir) then
-                    makefolder(dir)
+                if dir then
+                    if isfolder and makefolder then
+                        if not isfolder(dir) then
+                            -- Create nested directories
+                            local parts = string.split(dir, "/")
+                            local currentPath = ""
+                            for _, part in ipairs(parts) do
+                                currentPath = currentPath == "" and part or (currentPath .. "/" .. part)
+                                if not isfolder(currentPath) then
+                                    pcall(makefolder, currentPath)
+                                end
+                            end
+                        end
+                    elseif makefolder then
+                        pcall(makefolder, dir)
+                    end
                 end
                 
                 -- Write file
-                local writeSuccess = pcall(function()
+                local writeSuccess, writeErr = pcall(function()
                     writefile(Image, response)
                 end)
                 
                 if writeSuccess then
                     ImageFile = response
                 else
-                    warn("[AbyssLib AddImage]: Failed to write file - " .. Image)
-                end
-            else
-                warn("[AbyssLib AddImage]: Failed to download or invalid response - " .. Url)
-                if response then
-                    warn("[AbyssLib AddImage]: Response size: " .. #response .. " bytes")
+                    warn("[AbyssLib AddImage]: Failed to write file - " .. Image .. " Error: " .. tostring(writeErr))
+                    -- Still use the response even if write failed
+                    ImageFile = response
                 end
             end
         end)
@@ -1668,12 +1700,13 @@ do
         end
         
         -- Debug output
-        if ImageFile then
+        if ImageFile and typeof(ImageFile) == "string" and #ImageFile > 100 then
             if rconsoleinfo then
                 rconsoleinfo("[AbyssLib AddImage]: Loaded " .. Image .. " (" .. #ImageFile .. " bytes)")
             end
         else
-            warn("[AbyssLib AddImage]: No image data for " .. Image)
+            warn("[AbyssLib AddImage]: No valid image data for " .. Image)
+            ImageFile = nil
         end
         --
         return ImageFile
@@ -3223,9 +3256,7 @@ do
                         end
                         --
                         Utility.AddConnection(UserInput.InputEnded, function(Input, Useless)
-                            if Useless then
-                                return
-                            end
+                            -- Note: Removed Useless check for Volt compatibility
                             for Index, Value in pairs(Tab.Dropdowns[Side]) do
                                 if Index ~= ToggleTitle.Text and Value then
                                     return
@@ -3238,9 +3269,7 @@ do
                         end)
         
                         Utility.AddConnection(UserInput.InputChanged, function(Input, Useless)
-                            if Useless then
-                                return
-                            end
+                            -- Note: Removed Useless check for Volt compatibility
                             if Input.UserInputType == Enum.UserInputType.MouseMovement then
                                 for Index, Value in pairs(Tab.Dropdowns[Side]) do
                                     if Index ~= ToggleTitle.Text and Value then
@@ -3256,9 +3285,7 @@ do
                         end)
                         --
                         Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
-                            if Useless then
-                                return
-                            end
+                            -- Note: Removed Useless check for Volt compatibility
                             if Input.UserInputType == Enum.UserInputType.MouseButton1 then
                                 for Index, Value in pairs(Tab.Dropdowns[Side]) do
                                     if Index ~= ToggleTitle.Text and Value then
@@ -4741,11 +4768,13 @@ do
                         Dropdown.ListRender.Texts[Value] = SelectionTitle
                         --
                         Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
-                            if Useless then
+                            -- Note: Removed Useless check for Volt compatibility
+                            -- The dropdown needs to respond even when game processes input
+                            if not Dropdown.Show then
                                 return
                             end
-                            for Index, Value in pairs(Tab.Dropdowns[Side]) do
-                                if Index ~= DropdownTitle.Text and Value then
+                            for Index, Val in pairs(Tab.Dropdowns[Side]) do
+                                if Index ~= DropdownTitle.Text and Val then
                                     return
                                 end
                             end
@@ -4763,11 +4792,11 @@ do
                     Dropdown:ShowList(false)
                     --
                     Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
-                        
+                        -- Note: Removed Useless check for Volt compatibility
                         if Input.UserInputType == Enum.UserInputType.MouseButton1 then
                             if Utility.OnMouse(DropdownInline) then
-                                for Index, Value in pairs(Tab.Dropdowns[Side]) do
-                                    if Index ~= DropdownTitle.Text and Value then
+                                for Index, Val in pairs(Tab.Dropdowns[Side]) do
+                                    if Index ~= DropdownTitle.Text and Val then
                                         return
                                     end
                                 end
@@ -4775,7 +4804,7 @@ do
                                 Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
                                 DropdownSymbol.Text = Dropdown.Show and "-" or "+"
                                 Dropdown:ShowList(Dropdown.Show)
-                            elseif not Utility.OnMouse(DropdownDetect) then
+                            elseif Dropdown.Show and not Utility.OnMouse(DropdownDetect) then
                                 Dropdown.Show = false
                                 Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
                                 DropdownSymbol.Text = "+"
@@ -5175,9 +5204,8 @@ do
             end
             --
             Utility.AddConnection(UserInput.InputBegan, function(Input, Useless)
-                if Useless then
-                    return
-                end
+                -- Note: Removed Useless check for Volt compatibility
+                -- Tab switching should work regardless of game processing
                 if Input.UserInputType == Enum.UserInputType.MouseButton1 and Utility.OnMouse(TabInline) then
                     task.spawn(function()
                         --[[
