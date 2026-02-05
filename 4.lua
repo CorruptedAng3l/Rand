@@ -2205,22 +2205,28 @@ do
         Window["PageCover"] = SecondBorderInline
         --
         function Window.ChangeAnime(Name)
-            Anime.Data = (
-                Name == "Astolfo" and Library.Theme.Astolfo or
-                Name == "Aiko" and Library.Theme.Aiko or
-                Name == "Rem" and Library.Theme.Rem or
-                Name == "Violet" and Library.Theme.Violet or
-                Name == "Asuka" and Library.Theme.Asuka
-            )
-
-            Anime.Size = (
-                Name == "Astolfo" and Vector2.new(412, 605) or
-                Name == "Aiko" and Vector2.new(390, 630) or
-                Name == "Rem" and Vector2.new(390, 639) or
-                Name == "Violet" and Vector2.new(1029 / 3, 1497 / 3) or
-                Name == "Asuka" and Vector2.new(415, 601)
-            )
-
+            local AnimeData = {
+                Astolfo = {Data = Library.Theme.Astolfo, Size = Vector2.new(412, 605)},
+                Aiko = {Data = Library.Theme.Aiko, Size = Vector2.new(390, 630)},
+                Rem = {Data = Library.Theme.Rem, Size = Vector2.new(390, 639)},
+                Violet = {Data = Library.Theme.Violet, Size = Vector2.new(1029 / 3, 1497 / 3)},
+                Asuka = {Data = Library.Theme.Asuka, Size = Vector2.new(415, 601)}
+            }
+            
+            local selected = AnimeData[Name]
+            if not selected then
+                warn("[AbyssLib ChangeAnime]: Invalid anime name - " .. tostring(Name))
+                return
+            end
+            
+            if not selected.Data or typeof(selected.Data) ~= "string" then
+                warn("[AbyssLib ChangeAnime]: Anime image not loaded for - " .. tostring(Name))
+                Anime.Visible = false
+                return
+            end
+            
+            Anime.Data = selected.Data
+            Anime.Size = selected.Size
             Anime.Position = Vector2.new(Camera.ViewportSize.X - 400, Camera.ViewportSize.Y - Anime.Size.Y)
         end
         --
