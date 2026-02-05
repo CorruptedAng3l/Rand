@@ -1569,30 +1569,111 @@ do
         local ImageFile = nil
         --
         local success, err = pcall(function()
+            -- First check if file already exists locally
             if isfile and isfile(Image) then
                 ImageFile = readfile(Image)
+                if ImageFile and #ImageFile > 0 then
+                    return -- Successfully loaded from cache
+                end
+            end
+            
+            -- Try to download the image
+            local response = nil
+            
+            -- Method 1: Volt API request with proper headers
+            if request then
+                local requestSuccess, requestResult = pcall(function()
+                    return request({
+                        Url = Url,
+                        Method = "GET",
+                        Headers = {
+                            ["User-Agent"] = "Roblox/WinInet",
+                            ["Accept"] = "image/*,*/*"
+                        }
+                    })
+                end)
+                
+                if requestSuccess and requestResult and requestResult.Success and requestResult.Body then
+                    response = requestResult.Body
+                end
+            end
+            
+            -- Method 2: syn.request (Synapse)
+            if not response and syn and syn.request then
+                local synSuccess, synResult = pcall(function()
+                    return syn.request({
+                        Url = Url,
+                        Method = "GET"
+                    })
+                end)
+                
+                if synSuccess and synResult and synResult.Success and synResult.Body then
+                    response = synResult.Body
+                end
+            end
+            
+            -- Method 3: http_request
+            if not response and http_request then
+                local httpSuccess, httpResult = pcall(function()
+                    return http_request({
+                        Url = Url,
+                        Method = "GET"
+                    })
+                end)
+                
+                if httpSuccess and httpResult and httpResult.Success and httpResult.Body then
+                    response = httpResult.Body
+                end
+            end
+            
+            -- Method 4: game:HttpGet (fallback)
+            if not response then
+                local httpGetSuccess, httpGetResult = pcall(function()
+                    return game:HttpGet(Url)
+                end)
+                
+                if httpGetSuccess and httpGetResult and #httpGetResult > 0 then
+                    response = httpGetResult
+                end
+            end
+            
+            -- Save and set the image if we got data
+            if response and #response > 100 then -- Basic validation (image should be > 100 bytes)
+                -- Ensure directory exists
+                local dir = string.match(Image, "(.+)/[^/]+$")
+                if dir and isfolder and makefolder and not isfolder(dir) then
+                    makefolder(dir)
+                end
+                
+                -- Write file
+                local writeSuccess = pcall(function()
+                    writefile(Image, response)
+                end)
+                
+                if writeSuccess then
+                    ImageFile = response
+                else
+                    warn("[AbyssLib AddImage]: Failed to write file - " .. Image)
+                end
             else
-                -- Volt API: Use request for HTTP if available
-                local response
-                if request then
-                    response = request({Url = Url, Method = "GET"})
-                    if response.Success then
-                        ImageFile = response.Body
-                    end
-                end
-                
-                -- Fallback to HttpGet
-                if not ImageFile then
-                    ImageFile = game:HttpGet(Url)
-                end
-                
-                if ImageFile then
-                    writefile(Image, ImageFile)
+                warn("[AbyssLib AddImage]: Failed to download or invalid response - " .. Url)
+                if response then
+                    warn("[AbyssLib AddImage]: Response size: " .. #response .. " bytes")
                 end
             end
         end)
+        
         if not success then
             warn("[AbyssLib AddImage Error]: " .. tostring(err))
+        end
+        
+        -- Debug output
+        if ImageFile then
+            if rconsoleinfo then
+                rconsoleinfo("[AbyssLib AddImage]: Loaded " .. Image .. " (" .. #ImageFile .. " bytes)")
+            end
+        else
+            warn("[AbyssLib AddImage]: No image data for " .. Image)
         end
         --
         return ImageFile
@@ -2204,6 +2285,15 @@ do
         --
         Window["PageCover"] = SecondBorderInline
         --
+        -- Anime image URLs for reloading
+        local AnimeUrls = {
+            Astolfo = {Path = "Abyss/Assets/UI/Astolfo.png", Url = "https://i.imgur.com/T20cWY9.png"},
+            Aiko = {Path = "Abyss/Assets/UI/Aiko.png", Url = "https://i.imgur.com/1gRIdko.png"},
+            Rem = {Path = "Abyss/Assets/UI/Rem.png", Url = "https://i.imgur.com/ykbRkhJ.png"},
+            Violet = {Path = "Abyss/Assets/UI/Violet.png", Url = "https://i.imgur.com/7B56w4a.png"},
+            Asuka = {Path = "Abyss/Assets/UI/Asuka.png", Url = "https://i.imgur.com/3hwztNM.png"}
+        }
+        
         function Window.ChangeAnime(Name)
             local AnimeData = {
                 Astolfo = {Data = Library.Theme.Astolfo, Size = Vector2.new(412, 605)},
@@ -2219,10 +2309,29 @@ do
                 return
             end
             
-            if not selected.Data or typeof(selected.Data) ~= "string" then
-                warn("[AbyssLib ChangeAnime]: Anime image not loaded for - " .. tostring(Name))
-                Anime.Visible = false
-                return
+            -- Try to reload image if not loaded
+            if not selected.Data or typeof(selected.Data) ~= "string" or #selected.Data < 100 then
+                local urlInfo = AnimeUrls[Name]
+                if urlInfo then
+                    warn("[AbyssLib ChangeAnime]: Attempting to reload image for - " .. tostring(Name))
+                    local reloadedData = Utility.AddImage(urlInfo.Path, urlInfo.Url)
+                    if reloadedData and typeof(reloadedData) == "string" and #reloadedData > 100 then
+                        -- Update the Library.Theme reference
+                        Library.Theme[Name] = reloadedData
+                        selected.Data = reloadedData
+                        if rconsoleinfo then
+                            rconsoleinfo("[AbyssLib ChangeAnime]: Successfully reloaded " .. Name)
+                        end
+                    else
+                        warn("[AbyssLib ChangeAnime]: Failed to reload image for - " .. tostring(Name))
+                        Anime.Visible = false
+                        return
+                    end
+                else
+                    warn("[AbyssLib ChangeAnime]: No URL info for - " .. tostring(Name))
+                    Anime.Visible = false
+                    return
+                end
             end
             
             Anime.Data = selected.Data
