@@ -2936,7 +2936,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         local InternalBaseInline = Utility.AddDrawing("Square", {
@@ -3044,7 +3044,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         local InternalInlineRGB = Utility.AddDrawing("Square", {
@@ -3076,7 +3076,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         local InternalInlineRainbow = Utility.AddDrawing("Square", {
@@ -3108,7 +3108,7 @@ do
                             Size = Library.Theme.TextSize,
                             Color = Library.Theme.Text,
                             Visible = true,
-                            ZIndex = 3
+                            ZIndex = 4
                         })
                         --
                         function Colorpicker:Drop(State)
@@ -4170,7 +4170,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 3
+                        ZIndex = 4
                     })
                     --
                     local InternalBaseInline = Utility.AddDrawing("Square", {
@@ -4280,7 +4280,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 3
+                        ZIndex = 4
                     })
                     --
                     local InternalInlineRGB = Utility.AddDrawing("Square", {
@@ -4312,7 +4312,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 3
+                        ZIndex = 4
                     })
                     --
                     
@@ -4346,7 +4346,7 @@ do
                         Size = Library.Theme.TextSize,
                         Color = Library.Theme.Text,
                         Visible = true,
-                        ZIndex = 3
+                        ZIndex = 4
                     })
                     --
                     function Colorpicker:Drop(State)
