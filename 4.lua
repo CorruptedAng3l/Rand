@@ -4780,13 +4780,30 @@ do
                             end
                             if Input.UserInputType == Enum.UserInputType.MouseButton1 and Utility.OnMouse(SelectionInline) then
                                 Dropdown:Set(Value)
+                                -- Close dropdown after selection
+                                Dropdown.Show = false
+                                Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
+                                DropdownSymbol.Text = "+"
+                                Dropdown:ShowList(false)
                             end
                         end)
                         --
                     end
                     --
+                    -- Fix: Use 18 (actual item height) instead of BaseSize (16) for proper hitbox coverage
                     DropdownDetect.Position = Vector2.new(DropdownInline.Position.X, DropdownInline.Position.Y + DropdownInline.Size.Y)
-                    DropdownDetect.Size = Vector2.new(SectionOutline.Size.X - 12, (#Options.List * Dropdown.BaseSize) + Dropdown.BaseSize)
+                    DropdownDetect.Size = Vector2.new(SectionOutline.Size.X - 12, (#Options.List * 18) + 18)
+                    --
+                    -- Helper function to check if mouse is over any dropdown list item
+                    local function IsMouseOverDropdownList()
+                        if not Dropdown.Show then return false end
+                        for _, obj in pairs(Dropdown.ListRender.Objects) do
+                            if obj.Visible and Utility.OnMouse(obj) then
+                                return true
+                            end
+                        end
+                        return false
+                    end
                     --
                     Dropdown:Set(Dropdown.Selected)
                     Dropdown:ShowList(false)
@@ -4804,7 +4821,7 @@ do
                                 Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
                                 DropdownSymbol.Text = Dropdown.Show and "-" or "+"
                                 Dropdown:ShowList(Dropdown.Show)
-                            elseif Dropdown.Show and not Utility.OnMouse(DropdownDetect) then
+                            elseif Dropdown.Show and not Utility.OnMouse(DropdownDetect) and not IsMouseOverDropdownList() then
                                 Dropdown.Show = false
                                 Tab.Dropdowns[Side][DropdownTitle.Text] = Dropdown.Show
                                 DropdownSymbol.Text = "+"
